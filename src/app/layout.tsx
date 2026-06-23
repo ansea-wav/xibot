@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: {
-    icon: "/wazle-logo.png",
-    apple: "/wazle-logo.png",
+    icon: "/icons.png",
+    apple: "/icons.png",
   },
 };
 
