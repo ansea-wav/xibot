@@ -151,33 +151,43 @@ export default function Home() {
 
           <div className="grid md:grid-cols-4 gap-6 items-start">
             {[
-              { name: 'Starter', price: 'Rp 8.000', desc: 'Perfect for small applications', ram: '1 GB', cpu: '50%' },
-              { name: 'Basic', price: 'Rp 15.000', desc: 'Ideal for mid-sized applications', ram: '2 GB', cpu: '100%', popular: true },
-              { name: 'Premium', price: 'Rp 25.000', desc: 'Perfect for large applications', ram: '4 GB', cpu: '1.5 vCPU' },
-              { name: 'Custom Spec', price: 'Custom', desc: 'Need more power? Tailored specifications to meet your exact project requirements.', ram: '-', cpu: '-' }
+              { 
+                name: 'Free', price: 'Gratis', period: '', desc: 'Sempurna untuk coba-coba', 
+                features: ['1 Auto Responder', 'Tidak ada File Upload', 'Layanan API Terbatas', '1 Grup Terhubung']
+              },
+              { 
+                name: 'Basic', price: 'Rp 2.000', period: '/mo', desc: 'Cocok untuk grup kecil', 
+                features: ['5 Auto Responders', '500 KB Maks Upload', '50 MB Penyimpanan', '1 Grup Terhubung', 'Dukungan Dasar'] 
+              },
+              { 
+                name: 'Standard', price: 'Rp 5.000', period: '/mo', desc: 'Sempurna untuk grup aktif', popular: true,
+                features: ['25 Auto Responders', '5 MB Maks Upload', '500 MB Penyimpanan', '2 Grup Terhubung', 'Dukungan 24/7'] 
+              },
+              { 
+                name: 'Premium', price: 'Rp 20.000', period: '/mo', desc: 'Untuk bisnis & komunitas besar',
+                features: ['100 Auto Responders', '15 MB Maks Upload', '1000 MB Penyimpanan', '5 Grup Terhubung', 'Dukungan Prioritas 24/7'] 
+              }
             ].map((p, i) => (
-              <div key={i} className={`p-8 rounded-3xl border ${p.popular ? 'border-blue-500 bg-blue-500/5 relative' : 'border-white/10 bg-white/[0.02]'}`}>
+              <div key={i} className={`p-8 rounded-3xl border ${p.popular ? 'border-blue-500 bg-blue-500/5 relative shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'border-white/10 bg-white/[0.02]'}`}>
                 {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full uppercase tracking-wider">Most Popular</div>}
                 <h3 className="text-2xl font-bold mb-2">{p.name}</h3>
                 <p className="text-sm text-white/50 mb-6 h-10">{p.desc}</p>
-                <div className="text-4xl font-extrabold mb-8">{p.price}<span className="text-lg text-white/40 font-normal">/mo</span></div>
+                <div className="text-4xl font-extrabold mb-8">{p.price}<span className="text-lg text-white/40 font-normal">{p.period}</span></div>
                 
-                {p.ram !== '-' && (
-                  <div className="flex justify-between items-center p-4 bg-black/40 rounded-xl mb-6">
-                    <div className="text-center">
-                      <div className="font-bold text-lg">{p.ram}</div>
-                      <div className="text-xs text-white/40">RAM</div>
+                <div className="space-y-3 mb-8">
+                  {p.features.map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <span className="material-symbols-outlined text-[18px] text-blue-400 shrink-0">check_circle</span>
+                      <span className="text-sm text-white/80 leading-tight">{feat}</span>
                     </div>
-                    <div className="w-px h-8 bg-white/10"></div>
-                    <div className="text-center">
-                      <div className="font-bold text-lg">{p.cpu}</div>
-                      <div className="text-xs text-white/40">CPU</div>
-                    </div>
-                  </div>
-                )}
+                  ))}
+                </div>
                 
-                <button className={`w-full py-3 rounded-xl font-bold transition-colors ${p.popular ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
-                  Deploy Now
+                <button 
+                  onClick={() => setShowLogin(true)}
+                  className={`w-full py-3 rounded-xl font-bold transition-colors ${p.popular ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}
+                >
+                  Pilih Paket
                 </button>
               </div>
             ))}
