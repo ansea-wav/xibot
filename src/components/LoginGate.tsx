@@ -196,6 +196,16 @@ export default function LoginGate({ onLoginSuccess, isMobile }: LoginGateProps) 
             <p className="text-white/30 text-xs text-center mt-6 leading-relaxed px-4">
               Protected by Wazle Secure Auth.<br/>By continuing you agree to our Terms.
             </p>
+
+            <a 
+              href="https://wa.me/62882008677172" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 text-xs text-center mt-2 font-medium flex items-center justify-center gap-1 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[14px]">support_agent</span>
+              Hubungi Wazle Support Service
+            </a>
           </div>
         </div>
       </motion.div>
