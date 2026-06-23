@@ -248,14 +248,15 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
           >
             <div className="relative w-full max-w-md">
               <button 
                 onClick={() => setShowLogin(false)} 
-                className="absolute -top-12 right-0 text-white/60 hover:text-white"
+                className="absolute -top-12 right-0 md:-right-12 md:-top-0 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all border border-white/10"
+                title="Close"
               >
-                <span className="material-symbols-outlined text-3xl">close</span>
+                <span className="material-symbols-outlined">close</span>
               </button>
               <LoginGate onLoginSuccess={handleLoginSuccess} isMobile={false} />
             </div>
