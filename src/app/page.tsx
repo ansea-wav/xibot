@@ -24,6 +24,16 @@ export default function Home() {
     if (saved) setLoggedInPhone(saved);
   }, []);
 
+  useEffect(() => {
+    const titles = ["Wazle", "Wazle Forever", "Everything clear with us", "Wazle Indonesia"];
+    let index = 0;
+    const interval = setInterval(() => {
+      index = (index + 1) % titles.length;
+      document.title = titles[index];
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleLoginSuccess = (data: any, phone: string) => {
     localStorage.setItem('yay_user_phone', phone);
     setLoggedInPhone(phone);

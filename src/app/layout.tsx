@@ -13,8 +13,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wazle.my.id - The Ultimate Infrastructure",
-  description: "Lightning-fast hosting designed for bots.",
+  title: "Wazle",
+  description: "Wazle is the ultimate lightning-fast infrastructure hosting designed specifically for Discord, Telegram, and WhatsApp bots.",
+  keywords: ["Wazle", "Bot Hosting", "Discord Bot", "Telegram Bot", "WhatsApp Bot", "Cloud Hosting", "VPS"],
+  openGraph: {
+    title: "Wazle - Ultimate Bot Infrastructure",
+    description: "Lightning-fast hosting designed for bots. Experience professional-grade reliability and instant deployment.",
+    url: "https://wazle.my.id",
+    siteName: "Wazle",
+    locale: "id_ID",
+    type: "website",
+  },
+  icons: {
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230a0a0f'/><text x='50' y='72' font-size='70' font-family='Arial, sans-serif' font-weight='bold' fill='%233b82f6' text-anchor='middle'>W</text></svg>",
+  },
 };
 
 export default function RootLayout({
