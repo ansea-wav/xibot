@@ -89,7 +89,9 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-40 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-3">
-            <img src="/wazle-logo.png" alt="Wazle Logo" className="w-8 h-8 rounded-xl" />
+            <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+              <img src="/logo-white.png" alt="Wazle Logo" className="w-6 h-6 object-contain" />
+            </div>
             <span className="font-bold text-xl tracking-wide">Wazle</span>
           </div>
           
