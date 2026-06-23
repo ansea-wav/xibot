@@ -10,6 +10,11 @@ export default function Home() {
   const [showTicket, setShowTicket] = useState(false);
   const [loggedInPhone, setLoggedInPhone] = useState('');
   
+  // Download state
+  const [downloadCooldown, setDownloadCooldown] = useState(0);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const apkUrl = "https://github.com/ansea-wav/Wazle/releases/download/Wazle/Wazle-beta-v0.2.apk";
+
   // Ticket state
   const [ticketForm, setTicketForm] = useState({ name: '', whatsapp: '', subject: '', message: '' });
   const [ticketStatus, setTicketStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
@@ -50,22 +55,40 @@ export default function Home() {
     }
   };
 
+  const handleDownload = () => {
+    if (downloadCooldown > 0 || isDownloading) return;
+    setIsDownloading(true);
+    setDownloadCooldown(2);
+    const interval = setInterval(() => {
+      setDownloadCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          window.location.href = apkUrl;
+          setTimeout(() => setIsDownloading(false), 1000);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-blue-500/30 font-sans">
       
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-40 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-blue-500 text-3xl">public</span>
-            <span className="font-bold text-xl tracking-wide">Wazle.my.id</span>
+            <span className="font-bold text-xl tracking-wide">Wazle</span>
           </div>
           
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/60">
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8 text-sm font-medium text-white/60">
             <a href="#home" className="hover:text-white transition-colors">Home</a>
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
             <button onClick={() => setShowTicket(true)} className="hover:text-white transition-colors">Tickets</button>
+            <a href="#download" className="hover:text-white transition-colors">Download</a>
           </div>
 
           <div className="flex items-center gap-4">
@@ -191,6 +214,76 @@ export default function Home() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Download Section */}
+      <section id="download" className="py-24 px-6 border-t border-white/5 bg-white/[0.01] relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[100px]"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+          <div className="md:w-1/2 space-y-6 text-center md:text-left">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight">Unduh Aplikasi <br/><span className="text-blue-500">Wazle App</span></h2>
+            <p className="text-white/60 text-lg leading-relaxed max-w-xl">
+              Dapatkan pengalaman terbaik mengatur bot Anda langsung dari genggaman. Pantau statistik, atur auto-responder, dan kelola grup melalui aplikasi Android kami yang cepat dan responsif.
+            </p>
+            
+            <div className="pt-4 flex justify-center md:justify-start">
+              <button
+                onClick={handleDownload}
+                disabled={downloadCooldown > 0 || isDownloading}
+                className={`px-8 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${
+                  downloadCooldown > 0 
+                  ? 'bg-white/10 text-white/50 cursor-not-allowed'
+                  : 'bg-white text-black hover:bg-gray-200 hover:scale-105 shadow-[0_10px_25px_rgba(255,255,255,0.2)]'
+                }`}
+              >
+                {downloadCooldown > 0 ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin">refresh</span>
+                    Memulai Unduhan ({downloadCooldown}s)
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-2xl">android</span>
+                    Download APK
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="md:w-1/2 flex justify-center">
+            <div className="relative w-64 h-[500px] bg-[#111113] rounded-[40px] border-[8px] border-[#222] shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-6 bg-[#222] rounded-b-xl z-20"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-purple-900/40 z-0"></div>
+              
+              <div className="relative z-10 h-full p-4 flex flex-col pt-12">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center"><span className="material-symbols-outlined text-white text-[16px]">public</span></div>
+                  <div className="font-bold">Wazle Dashboard</div>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="h-24 bg-white/5 rounded-xl border border-white/10 p-3">
+                    <div className="w-1/2 h-3 bg-white/20 rounded-full mb-2"></div>
+                    <div className="w-3/4 h-3 bg-white/10 rounded-full"></div>
+                  </div>
+                  <div className="h-24 bg-white/5 rounded-xl border border-white/10 p-3">
+                    <div className="w-2/3 h-3 bg-white/20 rounded-full mb-2"></div>
+                    <div className="w-1/2 h-3 bg-white/10 rounded-full"></div>
+                  </div>
+                  <div className="h-24 bg-white/5 rounded-xl border border-white/10 p-3">
+                    <div className="w-1/3 h-3 bg-white/20 rounded-full mb-2"></div>
+                    <div className="w-5/6 h-3 bg-white/10 rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

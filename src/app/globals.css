@@ -20,6 +20,31 @@ body {
   overflow-x: hidden;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #333;
+  border-radius: 10px;
+  border: 3px solid #0a0a0f;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* For a dotted look, we can simulate it with a repeating background */
+::-webkit-scrollbar-thumb {
+  background-image: radial-gradient(circle, #555 20%, transparent 20%);
+  background-size: 10px 10px;
+  background-color: transparent;
+  border: none;
+}
+
 /* Material Symbols Default Styling */
 .material-symbols-outlined {
   font-variation-settings:
