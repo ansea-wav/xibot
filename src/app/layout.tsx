@@ -25,7 +25,8 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230a0a0f'/><text x='50' y='72' font-size='70' font-family='Arial, sans-serif' font-weight='bold' fill='%233b82f6' text-anchor='middle'>W</text></svg>",
+    icon: "/wazle-logo.png",
+    apple: "/wazle-logo.png",
   },
 };
 
