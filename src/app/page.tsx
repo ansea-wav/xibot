@@ -24,21 +24,22 @@ export default function Home() {
 
   // Collapsible Footer States & Animations
   const [isExpanded, setIsExpanded] = useState(false);
-  const [animationClass, setAnimationClass] = useState('');
+  const [windowWidth, setWindowWidth] = useState(1200);
+
+  // Monitor window size for responsive spring heights
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const triggerExpand = () => {
-    if (isExpanded) return;
     setIsExpanded(true);
-    setAnimationClass('animate-anticipation');
-    const timer = setTimeout(() => {
-      setAnimationClass('animate-squash-drop');
-    }, 500);
-    return () => clearTimeout(timer);
   };
 
   const triggerCollapse = () => {
     setIsExpanded(false);
-    setAnimationClass('');
   };
 
   // Trigger after 2 seconds on mount, auto-collapsing after 4 seconds
@@ -135,6 +136,10 @@ export default function Home() {
       });
     }, 1000);
   };
+
+  // Determine current height based on active breakpoint
+  const targetExpandedHeight = windowWidth < 768 ? 155 : 180;
+  const currentFooterHeight = isExpanded ? targetExpandedHeight : 40;
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
@@ -441,96 +446,126 @@ export default function Home() {
           
         </div>
 
-        {/* Responsive Collapsible Monochrome Footer */}
-        <footer 
+        {/* Responsive Collapsible Monochrome Footer with pure Spring Physics */}
+        <motion.footer 
           onMouseEnter={triggerExpand}
           onMouseLeave={triggerCollapse}
-          className={`bg-[#121214] text-white rounded-t-[2rem] w-full shrink-0 relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.25)] transition-all duration-500 overflow-hidden flex flex-col justify-between ${
-            isExpanded 
-              ? `h-[155px] sm:h-[180px] md:h-[180px] p-4.5 sm:p-5 md:px-10 py-4.5 ${animationClass}`
-              : 'h-[40px] py-2.5 flex items-center justify-center cursor-pointer p-0 select-none'
-          }`}
+          animate={{
+            height: currentFooterHeight,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 180, // Spring peer stiffness
+            damping: 10,    // Low damping for 3-4 natural bounces
+            mass: 0.8,
+          }}
+          className="bg-[#121214] text-white rounded-t-[2rem] w-full shrink-0 relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col justify-start px-5 sm:px-6 md:px-10"
         >
-          {!isExpanded ? (
+          {/* Collapsed Bar: Absolute at the top 40px height area */}
+          <motion.div
+            animate={{
+              opacity: isExpanded ? 0 : 1,
+              pointerEvents: isExpanded ? 'none' : 'auto',
+              y: isExpanded ? -10 : 0
+            }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-0 left-0 right-0 h-[40px] flex items-center justify-center cursor-pointer select-none"
+          >
             <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
               <span>Wazle @2026</span>
               <span className="material-symbols-outlined text-[12px] animate-bounce">keyboard_arrow_up</span>
             </div>
-          ) : (
-            <div className="w-full flex flex-col justify-between h-full text-center md:text-left gap-3">
+          </motion.div>
+
+          {/* Expanded Content: Absolute and stays stable during parent spring bounce */}
+          <motion.div
+            animate={{
+              opacity: isExpanded ? 1 : 0,
+              pointerEvents: isExpanded ? 'auto' : 'none',
+              y: isExpanded ? 0 : 15,
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 180,
+              damping: 12,
+              delay: isExpanded ? 0.05 : 0
+            }}
+            className="absolute left-0 right-0 px-5 sm:px-6 md:px-10 py-4.5 flex flex-col justify-between text-center md:text-left gap-3 pointer-events-none"
+            style={{
+              height: targetExpandedHeight,
+            }}
+          >
+            {/* Upper Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-zinc-850 pointer-events-auto">
               
-              {/* Upper Section */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-zinc-850">
-                
-                {/* Desktop/Tablet Left: Contact Info */}
-                <div className="hidden md:block space-y-1.5 text-left">
-                  <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Contact</h4>
-                  <div className="text-[9px] text-zinc-355 space-y-0.5">
-                    <p>Support WA: +62 882-0086-77172</p>
-                    <p>Email: support@wazle.my.id</p>
-                  </div>
-                  <div className="flex gap-2.5 text-[8px] text-zinc-450">
-                    <a href="https://facebook.com" className="hover:text-white transition-colors">Facebook</a>
-                    <a href="https://instagram.com" className="hover:text-white transition-colors">Instagram</a>
-                    <a href="https://linkedin.com" className="hover:text-white transition-colors">LinkedIn</a>
-                  </div>
+              {/* Desktop/Tablet Left: Contact Info */}
+              <div className="hidden md:block space-y-1.5 text-left">
+                <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Contact</h4>
+                <div className="text-[9px] text-zinc-355 space-y-0.5">
+                  <p>Support WA: +62 882-0086-77172</p>
+                  <p>Email: support@wazle.my.id</p>
                 </div>
-
-                {/* Center: Logo & Slogan (Always centered) */}
-                <div className="flex flex-col items-center text-center space-y-1 md:absolute md:left-1/2 md:-translate-x-1/2">
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M50 15C52 35 65 48 85 50C65 52 52 65 50 85C48 65 35 52 15 50C35 48 48 35 50 15Z" fill="currentColor"/>
-                    <circle cx="50" cy="50" r="8" fill="#121214"/>
-                  </svg>
-                  <div className="font-extrabold text-[11px] tracking-widest uppercase">Wazle</div>
-                  <div className="text-[8px] text-zinc-400 font-medium tracking-wide">The Ultimate Bot Infrastructure</div>
-                  
-                  {/* Action buttons shown on tablet/desktop */}
-                  <div className="hidden sm:flex items-center gap-1.5 pt-0.5">
-                    <button onClick={() => setShowLogin(true)} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">Start Free</button>
-                    <button onClick={() => setActiveTab('download')} className="px-2.5 py-0.5 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[8px] hover:bg-zinc-800 transition-colors">Download App</button>
-                  </div>
+                <div className="flex gap-2.5 text-[8px] text-zinc-450">
+                  <a href="https://facebook.com" className="hover:text-white transition-colors">Facebook</a>
+                  <a href="https://instagram.com" className="hover:text-white transition-colors">Instagram</a>
+                  <a href="https://linkedin.com" className="hover:text-white transition-colors">LinkedIn</a>
                 </div>
-
-                {/* Desktop/Tablet Right: Quick Links */}
-                <div className="hidden md:block space-y-1.5 text-right">
-                  <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Quick Links</h4>
-                  <div className="space-y-0.5 text-[9px] text-zinc-300">
-                    <button onClick={() => setActiveTab('home')} className="block hover:text-white ml-auto transition-colors">Home</button>
-                    <button onClick={() => setActiveTab('features')} className="block hover:text-white ml-auto transition-colors">Features</button>
-                    <button onClick={() => setActiveTab('pricing')} className="block hover:text-white ml-auto transition-colors">Pricing</button>
-                    <button onClick={() => setActiveTab('tickets')} className="block hover:text-white ml-auto transition-colors">Support Tickets</button>
-                  </div>
-                </div>
-
-                {/* Mobile-Only Row (Contact & Links combined inline) */}
-                <div className="md:hidden flex flex-col items-center gap-2.5 w-full pt-1.5">
-                  <div className="flex flex-wrap justify-center gap-x-3 text-[8px] text-zinc-400">
-                    <span>WA: +62 882-0086-77172</span>
-                    <span>•</span>
-                    <span>Email: support@wazle.my.id</span>
-                  </div>
-                  <div className="flex justify-center gap-3.5 text-[8px] font-semibold text-zinc-355">
-                    <button onClick={() => setActiveTab('home')} className="hover:text-white transition-colors">Home</button>
-                    <button onClick={() => setActiveTab('features')} className="hover:text-white transition-colors">Features</button>
-                    <button onClick={() => setActiveTab('pricing')} className="hover:text-white transition-colors">Pricing</button>
-                    <button onClick={() => setActiveTab('tickets')} className="hover:text-white transition-colors">Support</button>
-                  </div>
-                </div>
-
               </div>
 
-              {/* Bottom Row (Copyright & Policy) */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[8px] text-zinc-500">
-                <p>© 2026 Wazle. All rights reserved.</p>
-                <div className="flex gap-2.5">
-                  <a href="#" className="hover:text-zinc-300 transition-colors">Cookies policy</a>
-                  <a href="#" className="hover:text-zinc-300 transition-colors">Privacy policy</a>
+              {/* Center: Logo & Slogan */}
+              <div className="flex flex-col items-center text-center space-y-1 md:absolute md:left-1/2 md:-translate-x-1/2">
+                <svg className="w-6 h-6 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 15C52 35 65 48 85 50C65 52 52 65 50 85C48 65 35 52 15 50C35 48 48 35 50 15Z" fill="currentColor"/>
+                  <circle cx="50" cy="50" r="8" fill="#121214"/>
+                </svg>
+                <div className="font-extrabold text-[11px] tracking-widest uppercase">Wazle</div>
+                <div className="text-[8px] text-zinc-400 font-medium tracking-wide">The Ultimate Bot Infrastructure</div>
+                
+                {/* Action buttons shown on tablet/desktop */}
+                <div className="hidden sm:flex items-center gap-1.5 pt-0.5">
+                  <button onClick={() => setShowLogin(true)} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">Start Free</button>
+                  <button onClick={() => setActiveTab('download')} className="px-2.5 py-0.5 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[8px] hover:bg-zinc-800 transition-colors">Download App</button>
                 </div>
+              </div>
+
+              {/* Desktop/Tablet Right: Quick Links */}
+              <div className="hidden md:block space-y-1.5 text-right">
+                <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Quick Links</h4>
+                <div className="space-y-0.5 text-[9px] text-zinc-300">
+                  <button onClick={() => setActiveTab('home')} className="block hover:text-white ml-auto transition-colors">Home</button>
+                  <button onClick={() => setActiveTab('features')} className="block hover:text-white ml-auto transition-colors">Features</button>
+                  <button onClick={() => setActiveTab('pricing')} className="block hover:text-white ml-auto transition-colors">Pricing</button>
+                  <button onClick={() => setActiveTab('tickets')} className="block hover:text-white ml-auto transition-colors">Support Tickets</button>
+                </div>
+              </div>
+
+              {/* Mobile-Only Row */}
+              <div className="md:hidden flex flex-col items-center gap-2.5 w-full pt-1.5">
+                <div className="flex flex-wrap justify-center gap-x-3 text-[8px] text-zinc-400">
+                  <span>WA: +62 882-0086-77172</span>
+                  <span>•</span>
+                  <span>Email: support@wazle.my.id</span>
+                </div>
+                <div className="flex justify-center gap-3.5 text-[8px] font-semibold text-zinc-350">
+                  <button onClick={() => setActiveTab('home')} className="hover:text-white transition-colors">Home</button>
+                  <button onClick={() => setActiveTab('features')} className="hover:text-white transition-colors">Features</button>
+                  <button onClick={() => setActiveTab('pricing')} className="hover:text-white transition-colors">Pricing</button>
+                  <button onClick={() => setActiveTab('tickets')} className="hover:text-white transition-colors">Support</button>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Row (Copyright & Policy) */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[8px] text-zinc-550 pointer-events-auto">
+              <p>© 2026 Wazle. All rights reserved.</p>
+              <div className="flex gap-2.5">
+                <a href="#" className="hover:text-zinc-300 transition-colors">Cookies policy</a>
+                <a href="#" className="hover:text-zinc-300 transition-colors">Privacy policy</a>
               </div>
             </div>
-          )}
-        </footer>
+          </motion.div>
+        </motion.footer>
 
       </div>
 
@@ -560,44 +595,6 @@ export default function Home() {
       <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar { display: none !important; }
         .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
-
-        @keyframes anticipation-up {
-          0% { transform: translateY(0); }
-          30% { transform: translateY(12px); }
-          75% { transform: translateY(-6px); }
-          100% { transform: translateY(0); }
-        }
-
-        @keyframes squash-stretch-drop {
-          0% {
-            transform: translateY(-22px) scaleY(1.18) scaleX(0.82);
-            transform-origin: bottom;
-          }
-          40% {
-            transform: translateY(0) scaleY(0.68) scaleX(1.32);
-            transform-origin: bottom;
-          }
-          65% {
-            transform: translateY(-8px) scaleY(1.12) scaleX(0.88);
-            transform-origin: bottom;
-          }
-          85% {
-            transform: translateY(0) scaleY(0.96) scaleX(1.04);
-            transform-origin: bottom;
-          }
-          100% {
-            transform: translateY(0) scaleY(1) scaleX(1);
-            transform-origin: bottom;
-          }
-        }
-
-        .animate-anticipation {
-          animation: anticipation-up 0.5s ease-in-out forwards;
-        }
-
-        .animate-squash-drop {
-          animation: squash-stretch-drop 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
       `}} />
 
     </div>
