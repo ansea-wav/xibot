@@ -108,7 +108,9 @@ export default function Home() {
     const enterFullscreen = () => {
       const doc = document.documentElement;
       if (doc.requestFullscreen) {
-        doc.requestFullscreen().catch(() => {});
+        doc.requestFullscreen().catch((err) => {
+          console.log("Fullscreen request rejected:", err);
+        });
       } else if ((doc as any).webkitRequestFullscreen) {
         (doc as any).webkitRequestFullscreen();
       } else if ((doc as any).msRequestFullscreen) {
@@ -117,15 +119,15 @@ export default function Home() {
       
       // Clean up listeners immediately after first tap
       window.removeEventListener('click', enterFullscreen);
-      window.removeEventListener('touchstart', enterFullscreen);
+      window.removeEventListener('touchend', enterFullscreen);
     };
 
     window.addEventListener('click', enterFullscreen);
-    window.addEventListener('touchstart', enterFullscreen);
+    window.addEventListener('touchend', enterFullscreen);
 
     return () => {
       window.removeEventListener('click', enterFullscreen);
-      window.removeEventListener('touchstart', enterFullscreen);
+      window.removeEventListener('touchend', enterFullscreen);
     };
   }, []);
 
