@@ -7,12 +7,103 @@ import { getSharedCookie, setSharedCookie } from '@/lib/cookies';
 const LoginGate = dynamic(() => import('@/components/LoginGate'));
 
 type Tab = 'home' | 'features' | 'pricing' | 'tickets' | 'download';
+type Lang = 'en' | 'id';
+
+const translations = {
+  en: {
+    heroBadge: "Next-Gen Hosting for Bots",
+    heroTitle: "The Ultimate\nInfrastructure\nFor Your Bots.",
+    heroDesc: "Lightning-fast hosting designed for Discord and Telegram bots. Experience professional-grade reliability, secure infrastructure, and instant deployment.",
+    ctaStart: "Get Started Now",
+    ctaPricing: "View Pricing",
+    featuresTitle: "Everything you need",
+    featuresDesc: "Built for reliability, speed, and simplicity.",
+    pricingTitle: "Simple, transparent pricing",
+    pricingDesc: "No hidden fees. Cancel anytime.",
+    supportTitle: "Submit Ticket",
+    supportDesc: "Need help? Send us a message and we'll get back to you.",
+    downloadTitle: "Download Wazle App",
+    downloadDesc: "Get the best experience managing your bots directly from your palm. Monitor statistics, configure auto-responders, and manage groups through our fast, responsive, and elegant Android application.",
+    contact: "Contact",
+    quickLinks: "Quick Links",
+    allRights: "© 2026 Wazle. All rights reserved.",
+    cookiesPolicy: "Cookies policy",
+    privacyPolicy: "Privacy policy",
+    startFree: "Start Free",
+    downloadApp: "Download App",
+    selectPlan: "Choose Plan",
+    ticketName: "Name",
+    ticketPhone: "WhatsApp Number",
+    ticketSubject: "Subject",
+    ticketMessage: "Message",
+    ticketSubmit: "Submit Ticket",
+    ticketSubmitting: "Submitting...",
+    ticketSuccess: "Ticket submitted successfully!",
+    ticketAnother: "Submit Another",
+    freeDesc: "Perfect for testing",
+    basicDesc: "Great for small groups",
+    standardDesc: "Perfect for active groups",
+    premiumDesc: "For large business & communities",
+    popular: "Popular",
+    downloadBtn: "Download APK",
+    downloadingBtn: "Starting Download",
+    gratis: "Free",
+    bulan: "month",
+    supportLabel: "support"
+  },
+  id: {
+    heroBadge: "Next-Gen Hosting untuk Bot",
+    heroTitle: "Infrastruktur\nTerbaik Untuk\nBot Anda.",
+    heroDesc: "Hosting super cepat yang dirancang untuk bot Discord dan Telegram. Nikmati keandalan kelas profesional, infrastruktur aman, dan peluncuran instan.",
+    ctaStart: "Mulai Sekarang",
+    ctaPricing: "Lihat Harga",
+    featuresTitle: "Semua yang Anda butuhkan",
+    featuresDesc: "Dibuat untuk keandalan, kecepatan, dan kesederhanaan.",
+    pricingTitle: "Harga sederhana & transparan",
+    pricingDesc: "Tanpa biaya tersembunyi. Batalkan kapan saja.",
+    supportTitle: "Kirim Tiket",
+    supportDesc: "Butuh bantuan? Kirim pesan dan kami akan segera membalas Anda.",
+    downloadTitle: "Unduh Aplikasi Wazle App",
+    downloadDesc: "Dapatkan pengalaman terbaik mengatur bot Anda langsung dari genggaman. Pantau statistik, atur auto-responder, dan kelola grup melalui aplikasi Android kami yang cepat, responsif, dan elegan.",
+    contact: "Kontak",
+    quickLinks: "Tautan Langsung",
+    allRights: "© 2026 Wazle. Hak cipta dilindungi undang-undang.",
+    cookiesPolicy: "Kebijakan cookies",
+    privacyPolicy: "Kebijakan privasi",
+    startFree: "Mulai Gratis",
+    downloadApp: "Unduh Aplikasi",
+    selectPlan: "Pilih Paket",
+    ticketName: "Nama",
+    ticketPhone: "Nomor WhatsApp",
+    ticketSubject: "Subjek",
+    ticketMessage: "Pesan",
+    ticketSubmit: "Kirim Tiket",
+    ticketSubmitting: "Mengirim...",
+    ticketSuccess: "Tiket berhasil dikirim!",
+    ticketAnother: "Kirim Lainnya",
+    freeDesc: "Sempurna untuk coba-coba",
+    basicDesc: "Cocok untuk grup kecil",
+    standardDesc: "Sempurna untuk grup aktif",
+    premiumDesc: "Bisnis & komunitas besar",
+    popular: "Populer",
+    downloadBtn: "Download APK",
+    downloadingBtn: "Memulai Unduhan",
+    gratis: "Gratis",
+    bulan: "bulan",
+    supportLabel: "bantuan"
+  }
+};
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [showLogin, setShowLogin] = useState(false);
   const [loggedInPhone, setLoggedInPhone] = useState('');
   
+  // Language Switch States
+  const [lang, setLang] = useState<Lang>('id');
+  const [langHovered, setLangHovered] = useState(false);
+  const [langAutoHide, setLangAutoHide] = useState(false);
+
   // Download state
   const [downloadCooldown, setDownloadCooldown] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -29,6 +120,30 @@ export default function Home() {
   // DevTools / Security Lock States
   const [isLocked, setIsLocked] = useState(false);
   const [isDOMCleared, setIsDOMCleared] = useState(false);
+
+  // Translations shortcut
+  const t = translations[lang];
+
+  // Language auto-hide logic: collapse after 1.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLangAutoHide(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Sync saved language preference
+  useEffect(() => {
+    const saved = localStorage.getItem('yay_lang') as Lang;
+    if (saved === 'en' || saved === 'id') {
+      setLang(saved);
+    }
+  }, []);
+
+  const handleLangChange = (newLang: Lang) => {
+    setLang(newLang);
+    localStorage.setItem('yay_lang', newLang);
+  };
 
   // Security Lock logic (inspect elements blocker)
   useEffect(() => {
@@ -254,9 +369,100 @@ export default function Home() {
   const targetExpandedHeight = windowWidth < 768 ? 155 : 180;
   const currentFooterHeight = isExpanded ? targetExpandedHeight : 40;
 
+  // Pricing Plan Packages list (dynamically translated)
+  const packages = [
+    { 
+      name: 'Free', 
+      price: t.gratis, 
+      originalPrice: null, 
+      discountTag: null, 
+      desc: t.freeDesc, 
+      features: lang === 'id' 
+        ? ['1 Auto Responder', 'Tanpa Unggah Berkas', 'API Terbatas', '1 Grup Terhubung'] 
+        : ['1 Auto Responder', 'No File Upload', 'Limited API', '1 Linked Group'] 
+    },
+    { 
+      name: 'Basic', 
+      price: 'Rp 500', 
+      originalPrice: 'Rp 2.000', 
+      discountTag: '75% OFF', 
+      desc: t.basicDesc, 
+      features: lang === 'id'
+        ? ['5 Auto Responder', 'Maks 500 KB Unggah', 'Penyimpanan 50 MB', '1 Grup Terhubung']
+        : ['5 Auto Responders', '500 KB Max Upload', '50 MB Storage', '1 Linked Group']
+    },
+    { 
+      name: 'Standard', 
+      price: 'Rp 1.000', 
+      originalPrice: 'Rp 5.000', 
+      discountTag: '80% OFF', 
+      desc: t.standardDesc, 
+      popular: true, 
+      features: lang === 'id'
+        ? ['25 Auto Responder', 'Maks 5 MB Unggah', 'Penyimpanan 500 MB', '2 Grup Terhubung']
+        : ['25 Auto Responders', '5 MB Max Upload', '500 MB Storage', '2 Linked Groups']
+    },
+    { 
+      name: 'Premium', 
+      price: 'Rp 8.000', 
+      originalPrice: 'Rp 20.000', 
+      discountTag: '50% + 20% OFF', 
+      desc: t.premiumDesc, 
+      features: lang === 'id'
+        ? ['100 Auto Responder', 'Maks 15 MB Unggah', 'Penyimpanan 1000 MB', '5 Grup Terhubung']
+        : ['100 Auto Responders', '15 MB Max Upload', '1000 MB Storage', '5 Linked Groups']
+    }
+  ];
+
+  // Features list (dynamically translated)
+  const featuresList = [
+    { icon: 'bolt', title: lang === 'id' ? 'Kinerja Tinggi' : 'High Performance', desc: lang === 'id' ? 'Didukung CPU & SSD NVMe generasi terbaru untuk respon instan.' : 'Powered by latest generation CPUs and NVMe SSDs for instant responses.' },
+    { icon: 'shield', title: lang === 'id' ? 'Perlindungan Cloudflare' : 'Cloudflare Protection', desc: lang === 'id' ? 'Mitigasi DDoS tingkat korporat menyaring lalu lintas berbahaya secara otomatis.' : 'Enterprise-grade DDoS mitigation filters malicious traffic automatically.' },
+    { icon: 'public', title: lang === 'id' ? 'Jaringan Global Edge' : 'Global Edge Network', desc: lang === 'id' ? 'Luncurkan server Anda di wilayah optimal untuk latensi terendah.' : 'Deploy your server in optimal regions for lowest latency and maximum uptime.' },
+  ];
+
+  const isLangCollapsed = langAutoHide && !langHovered;
+
   return (
     <div className="h-screen h-[100dvh] w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
       
+      {/* Dynamic Island Style Language Switcher Notch on the Left Edge */}
+      <motion.div
+        onMouseEnter={() => setLangHovered(true)}
+        onMouseLeave={() => setLangHovered(false)}
+        animate={{
+          x: isLangCollapsed ? -30 : 0,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 220,
+          damping: 18
+        }}
+        className="fixed left-0 top-1/2 -translate-y-1/2 z-[99] bg-[#121214] text-white w-[42px] h-[110px] rounded-r-[1.5rem] border border-zinc-800 border-l-0 shadow-2xl flex flex-col items-center justify-center py-2.5 cursor-pointer select-none"
+      >
+        <div className="relative flex flex-col items-center gap-2 w-full h-full justify-center">
+          {/* Sliding Pill Indicator */}
+          <div 
+            className="absolute w-[30px] h-[34px] rounded-xl bg-zinc-800 transition-all duration-300 pointer-events-none"
+            style={{
+              transform: lang === 'en' ? 'translateY(-21px)' : 'translateY(21px)'
+            }}
+          />
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleLangChange('en'); }}
+            className={`relative z-10 w-[30px] h-[34px] flex items-center justify-center rounded-xl text-[9px] font-black tracking-widest ${lang === 'en' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
+          >
+            EN
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleLangChange('id'); }}
+            className={`relative z-10 w-[30px] h-[34px] flex items-center justify-center rounded-xl text-[9px] font-black tracking-widest ${lang === 'id' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
+          >
+            ID
+          </button>
+        </div>
+      </motion.div>
+
       {/* Hidden SVG Gooey Filter Definition */}
       <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -323,7 +529,7 @@ export default function Home() {
                   activeTab === tab ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
                 }`}
               >
-                {tab === 'tickets' ? 'support' : tab}
+                {tab === 'tickets' ? t.supportLabel : tab}
               </button>
             ))}
           </div>
@@ -364,20 +570,20 @@ export default function Home() {
               >
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-[10px] font-bold text-zinc-600 uppercase tracking-wider mb-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
-                  Next-Gen Hosting for Bots
+                  {t.heroBadge}
                 </div>
-                <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-950 leading-tight">
-                  The Ultimate<br/>Infrastructure<br/>For Your Bots.
+                <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-950 leading-tight whitespace-pre-line">
+                  {t.heroTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-zinc-550 max-w-lg mx-auto leading-relaxed">
-                  Lightning-fast hosting designed for Discord and Telegram bots. Experience professional-grade reliability, secure infrastructure, and instant deployment.
+                  {t.heroDesc}
                 </p>
                 <div className="flex items-center justify-center gap-3 pt-2">
                   <button onClick={() => setShowLogin(true)} className="px-5 py-2.5 bg-zinc-950 text-white rounded-full text-xs font-bold hover:bg-zinc-900 transition-all active:scale-95">
-                    Get Started Now
+                    {t.ctaStart}
                   </button>
                   <button onClick={() => setActiveTab('pricing')} className="px-5 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-950 border border-zinc-200 rounded-full text-xs font-bold transition-all active:scale-95">
-                    View Pricing
+                    {t.ctaPricing}
                   </button>
                 </div>
               </motion.div>
@@ -392,16 +598,12 @@ export default function Home() {
                 className="w-full max-w-5xl mx-auto py-2"
               >
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-extrabold text-zinc-950">Everything you need</h2>
-                  <p className="text-zinc-500 text-[11px] mt-0.5">Built for reliability, speed, and simplicity.</p>
+                  <h2 className="text-2xl font-extrabold text-zinc-950">{t.featuresTitle}</h2>
+                  <p className="text-zinc-500 text-[11px] mt-0.5">{t.featuresDesc}</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[
-                    { icon: 'bolt', title: 'High Performance', desc: 'Powered by latest generation CPUs and NVMe SSDs for instant responses.' },
-                    { icon: 'shield', title: 'Cloudflare Protection', desc: 'Enterprise-grade DDoS mitigation filters malicious traffic automatically.' },
-                    { icon: 'public', title: 'Global Edge Network', desc: 'Deploy your server in optimal regions for lowest latency and maximum uptime.' },
-                  ].map((f, i) => (
+                  {featuresList.map((f, i) => (
                     <div key={i} className="p-5 rounded-2xl bg-white border border-zinc-200/60 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all flex flex-col items-start text-left">
                       <span className="material-symbols-outlined text-2xl mb-3 text-zinc-900">{f.icon}</span>
                       <h3 className="text-sm font-bold text-zinc-950 mb-1">{f.title}</h3>
@@ -421,19 +623,14 @@ export default function Home() {
                 className="w-full max-w-5xl mx-auto py-1"
               >
                 <div className="text-center mb-4">
-                  <h2 className="text-2xl font-extrabold text-zinc-950">Simple, transparent pricing</h2>
-                  <p className="text-zinc-500 text-[11px] mt-0.5">No hidden fees. Cancel anytime.</p>
+                  <h2 className="text-2xl font-extrabold text-zinc-950">{t.pricingTitle}</h2>
+                  <p className="text-zinc-500 text-[11px] mt-0.5">{t.pricingDesc}</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
-                  {[
-                    { name: 'Free', price: 'Gratis', originalPrice: null, discountTag: null, desc: 'Sempurna untuk coba-coba', features: ['1 Auto Responder', 'No File Upload', 'Limited API', '1 Linked Group'] },
-                    { name: 'Basic', price: 'Rp 500', originalPrice: 'Rp 2.000', discountTag: '75% OFF', desc: 'Cocok untuk grup kecil', features: ['5 Auto Responders', '500 KB Max Upload', '50 MB Storage', '1 Linked Group'] },
-                    { name: 'Standard', price: 'Rp 1.000', originalPrice: 'Rp 5.000', discountTag: '80% OFF', desc: 'Sempurna untuk grup aktif', popular: true, features: ['25 Auto Responders', '5 MB Max Upload', '500 MB Storage', '2 Linked Groups'] },
-                    { name: 'Premium', price: 'Rp 8.000', originalPrice: 'Rp 20.000', discountTag: '50% + 20% OFF', desc: 'Bisnis & komunitas besar', features: ['100 Auto Responders', '15 MB Max Upload', '1000 MB Storage', '5 Linked Groups'] }
-                  ].map((p, i) => (
+                  {packages.map((p, i) => (
                     <div key={i} className={`p-4 rounded-2xl border ${p.popular ? 'border-zinc-950 bg-zinc-950 text-white shadow-lg relative' : 'border-zinc-200 bg-white text-zinc-950 shadow-sm'}`}>
-                      {p.popular && <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-white text-zinc-950 text-[8px] font-black rounded-full uppercase tracking-wider border border-zinc-200">Popular</div>}
+                      {p.popular && <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-white text-zinc-950 text-[8px] font-black rounded-full uppercase tracking-wider border border-zinc-200">{t.popular}</div>}
                       <div className="flex items-center justify-between mb-0.5">
                         <h3 className="text-sm font-bold">{p.name}</h3>
                         {p.discountTag && (
@@ -449,14 +646,14 @@ export default function Home() {
                         {p.originalPrice && (
                           <div className={`text-[10px] line-through ${p.popular ? 'text-zinc-500' : 'text-zinc-400'}`}>{p.originalPrice}</div>
                         )}
-                        <span className={`text-[8px] ${p.popular ? 'text-zinc-500' : 'text-zinc-400'}`}>/m</span>
+                        <span className={`text-[8px] ${p.popular ? 'text-zinc-500' : 'text-zinc-400'}`}>/{lang === 'id' ? 'bln' : 'mo'}</span>
                       </div>
                       
                       <div className="space-y-1.5 mb-4">
                         {p.features.map((feat, idx) => (
                           <div key={idx} className="flex items-start gap-1.5">
                             <span className={`material-symbols-outlined text-[12px] shrink-0 ${p.popular ? 'text-white' : 'text-zinc-900'}`}>check_circle</span>
-                            <span className={`text-[9px] leading-tight ${p.popular ? 'text-zinc-300' : 'text-zinc-650'}`}>{feat}</span>
+                            <span className={`text-[9px] leading-tight ${p.popular ? 'text-zinc-300' : 'text-zinc-655'}`}>{feat}</span>
                           </div>
                         ))}
                       </div>
@@ -465,7 +662,7 @@ export default function Home() {
                         onClick={() => setShowLogin(true)}
                         className={`w-full py-2 rounded-xl text-[10px] font-bold transition-all active:scale-95 ${p.popular ? 'bg-white text-zinc-950 hover:bg-zinc-100' : 'bg-zinc-950 text-white hover:bg-zinc-900'}`}
                       >
-                        Pilih Paket
+                        {t.selectPlan}
                       </button>
                     </div>
                   ))}
@@ -482,38 +679,38 @@ export default function Home() {
                 className="w-full max-w-sm mx-auto py-2"
               >
                 <div className="text-center mb-4">
-                  <h2 className="text-2xl font-extrabold text-zinc-950">Submit Ticket</h2>
-                  <p className="text-zinc-550 text-[11px] mt-0.5">Need help? Send us a message and we'll get back to you.</p>
+                  <h2 className="text-2xl font-extrabold text-zinc-950">{t.supportTitle}</h2>
+                  <p className="text-zinc-550 text-[11px] mt-0.5">{t.supportDesc}</p>
                 </div>
 
                 {ticketStatus === 'success' ? (
                   <div className="p-5 bg-zinc-100 border border-zinc-200 rounded-2xl text-center">
                     <span className="material-symbols-outlined text-zinc-900 text-3xl mb-2">check_circle</span>
-                    <p className="text-zinc-900 font-bold text-xs">Ticket submitted successfully!</p>
-                    <button onClick={() => setTicketStatus('idle')} className="mt-3 px-3 py-1.5 bg-zinc-950 text-white text-[10px] font-bold rounded-lg hover:bg-zinc-900">Submit Another</button>
+                    <p className="text-zinc-900 font-bold text-xs">{t.ticketSuccess}</p>
+                    <button onClick={() => setTicketStatus('idle')} className="mt-3 px-3 py-1.5 bg-zinc-950 text-white text-[10px] font-bold rounded-lg hover:bg-zinc-900">{t.ticketAnother}</button>
                   </div>
                 ) : (
                   <form onSubmit={submitTicket} className="space-y-2.5 bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm text-left">
                     <div>
-                      <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">Name</label>
+                      <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">{t.ticketName}</label>
                       <input required type="text" value={ticketForm.name} onChange={e => setTicketForm({...ticketForm, name: e.target.value})} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-1.5 text-xs text-zinc-900 focus:outline-none focus:border-zinc-500 transition-colors" placeholder="Your name" />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">WhatsApp Number</label>
+                        <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">{t.ticketPhone}</label>
                         <input required type="text" value={ticketForm.whatsapp} onChange={e => setTicketForm({...ticketForm, whatsapp: e.target.value})} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-1.5 text-xs text-zinc-900 focus:outline-none focus:border-zinc-500 transition-colors" placeholder="08..." />
                       </div>
                       <div>
-                        <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">Subject</label>
+                        <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">{t.ticketSubject}</label>
                         <input required type="text" value={ticketForm.subject} onChange={e => setTicketForm({...ticketForm, subject: e.target.value})} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-1.5 text-xs text-zinc-900 focus:outline-none focus:border-zinc-500 transition-colors" placeholder="Topic" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">Message</label>
+                      <label className="block text-[9px] font-bold text-zinc-400 mb-0.5 uppercase tracking-wider">{t.ticketMessage}</label>
                       <textarea required value={ticketForm.message} onChange={e => setTicketForm({...ticketForm, message: e.target.value})} rows={2} className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-1.5 text-xs text-zinc-900 focus:outline-none focus:border-zinc-500 transition-colors resize-none" placeholder="Describe your issue..."></textarea>
                     </div>
                     <button type="submit" disabled={ticketStatus === 'loading'} className="w-full py-2 bg-zinc-950 hover:bg-zinc-900 text-white text-[11px] font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50 mt-1">
-                      {ticketStatus === 'loading' ? 'Submitting...' : 'Submit Ticket'}
+                      {ticketStatus === 'loading' ? t.ticketSubmitting : t.ticketSubmit}
                     </button>
                   </form>
                 )}
@@ -529,9 +726,9 @@ export default function Home() {
                 className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6 py-2 text-left"
               >
                 <div className="md:w-1/2 space-y-3">
-                  <h2 className="text-2xl font-black text-zinc-950 leading-tight">Unduh Aplikasi <br/><span className="text-zinc-650">Wazle App</span></h2>
+                  <h2 className="text-2xl font-black text-zinc-950 leading-tight whitespace-pre-line">{t.downloadTitle}</h2>
                   <p className="text-zinc-550 text-xs leading-relaxed">
-                    Dapatkan pengalaman terbaik mengatur bot Anda langsung dari genggaman. Pantau statistik, atur auto-responder, dan kelola grup melalui aplikasi Android kami yang cepat, responsif, dan elegan.
+                    {t.downloadDesc}
                   </p>
                   
                   <div className="pt-1">
@@ -547,12 +744,12 @@ export default function Home() {
                       {downloadCooldown > 0 ? (
                         <>
                           <span className="material-symbols-outlined animate-spin text-[14px]">refresh</span>
-                          Memulai Unduhan ({downloadCooldown}s)
+                          {t.downloadingBtn} ({downloadCooldown}s)
                         </>
                       ) : (
                         <>
                           <span className="material-symbols-outlined text-[14px]">android</span>
-                          Download APK
+                          {t.downloadBtn}
                         </>
                       )}
                     </button>
@@ -639,7 +836,7 @@ export default function Home() {
               
               {/* Desktop/Tablet Left: Contact Info */}
               <div className="hidden md:block space-y-1.5 text-left">
-                <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Contact</h4>
+                <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">{t.contact}</h4>
                 <div className="text-[9px] text-zinc-355 space-y-0.5">
                   <p>Support WA: +62 882-0086-77172</p>
                   <p>Email: support@wazle.my.id</p>
@@ -662,19 +859,19 @@ export default function Home() {
                 
                 {/* Action buttons shown on tablet/desktop */}
                 <div className="hidden sm:flex items-center gap-1.5 pt-0.5">
-                  <button onClick={() => setShowLogin(true)} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">Start Free</button>
-                  <button onClick={() => setActiveTab('download')} className="px-2.5 py-0.5 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[8px] hover:bg-zinc-800 transition-colors">Download App</button>
+                  <button onClick={() => setShowLogin(true)} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">{t.startFree}</button>
+                  <button onClick={() => setActiveTab('download')} className="px-2.5 py-0.5 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[8px] hover:bg-zinc-800 transition-colors">{t.downloadApp}</button>
                 </div>
               </div>
 
               {/* Desktop/Tablet Right: Quick Links */}
               <div className="hidden md:block space-y-1.5 text-right">
-                <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Quick Links</h4>
+                <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">{t.quickLinks}</h4>
                 <div className="space-y-0.5 text-[9px] text-zinc-300">
                   <button onClick={() => setActiveTab('home')} className="block hover:text-white ml-auto transition-colors">Home</button>
                   <button onClick={() => setActiveTab('features')} className="block hover:text-white ml-auto transition-colors">Features</button>
                   <button onClick={() => setActiveTab('pricing')} className="block hover:text-white ml-auto transition-colors">Pricing</button>
-                  <button onClick={() => setActiveTab('tickets')} className="block hover:text-white ml-auto transition-colors">Support Tickets</button>
+                  <button onClick={() => setActiveTab('tickets')} className="block hover:text-white ml-auto transition-colors">{t.supportTitle}</button>
                 </div>
               </div>
 
@@ -689,7 +886,7 @@ export default function Home() {
                   <button onClick={() => setActiveTab('home')} className="hover:text-white transition-colors">Home</button>
                   <button onClick={() => setActiveTab('features')} className="hover:text-white transition-colors">Features</button>
                   <button onClick={() => setActiveTab('pricing')} className="hover:text-white transition-colors">Pricing</button>
-                  <button onClick={() => setActiveTab('tickets')} className="hover:text-white transition-colors">Support</button>
+                  <button onClick={() => setActiveTab('tickets')} className="hover:text-white transition-colors">{t.supportLabel}</button>
                 </div>
               </div>
 
@@ -697,10 +894,10 @@ export default function Home() {
 
             {/* Bottom Row (Copyright & Policy) */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[8px] text-zinc-550 pointer-events-auto">
-              <p>© 2026 Wazle. All rights reserved.</p>
+              <p>{t.allRights}</p>
               <div className="flex gap-2.5">
-                <a href="#" className="hover:text-zinc-300 transition-colors">Cookies policy</a>
-                <a href="#" className="hover:text-zinc-300 transition-colors">Privacy policy</a>
+                <a href="#" className="hover:text-zinc-300 transition-colors">{t.cookiesPolicy}</a>
+                <a href="#" className="hover:text-zinc-300 transition-colors">{t.privacyPolicy}</a>
               </div>
             </div>
           </motion.div>
