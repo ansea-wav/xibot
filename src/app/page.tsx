@@ -388,8 +388,8 @@ export default function Home() {
       discountTag: '75% OFF', 
       desc: t.basicDesc, 
       features: lang === 'id'
-        ? ['5 Auto Responder', 'Maks 500 KB Unggah', 'Penyimpanan 50 MB', '1 Grup Terhubung']
-        : ['5 Auto Responders', '500 KB Max Upload', '50 MB Storage', '1 Linked Group']
+        ? ['30 Auto Responder', 'AI Zeina X', 'Panel Petrodactyl']
+        : ['30 Auto Responders', 'AI Zeina X', 'Petrodactyl Panel']
     },
     { 
       name: 'Standard', 
@@ -399,8 +399,8 @@ export default function Home() {
       desc: t.standardDesc, 
       popular: true, 
       features: lang === 'id'
-        ? ['25 Auto Responder', 'Maks 5 MB Unggah', 'Penyimpanan 500 MB', '2 Grup Terhubung']
-        : ['25 Auto Responders', '5 MB Max Upload', '500 MB Storage', '2 Linked Groups']
+        ? ['50 Auto Responder', 'AI Zeina Pro', 'Panel Petrodactyl', 'Custom Servertag / Group Tag']
+        : ['50 Auto Responders', 'AI Zeina Pro', 'Petrodactyl Panel', 'Custom Servertag / Group Tag']
     },
     { 
       name: 'Premium', 
@@ -409,8 +409,8 @@ export default function Home() {
       discountTag: '50% + 20% OFF', 
       desc: t.premiumDesc, 
       features: lang === 'id'
-        ? ['100 Auto Responder', 'Maks 15 MB Unggah', 'Penyimpanan 1000 MB', '5 Grup Terhubung']
-        : ['100 Auto Responders', '15 MB Max Upload', '1000 MB Storage', '5 Linked Groups']
+        ? ['150 Auto Responder', 'AI Zeina Pro', 'Panel Hosting', 'Custom API', 'Special Domain', 'SFTP', 'Custom Servertag / Group Tag']
+        : ['150 Auto Responders', 'AI Zeina Pro', 'Hosting Panel', 'Custom API', 'Special Domain', 'SFTP', 'Custom Servertag / Group Tag']
     }
   ];
 
