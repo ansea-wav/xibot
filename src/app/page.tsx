@@ -31,7 +31,7 @@ export default function Home() {
     setIsExpanded(true);
     setAnimationClass('animate-anticipation');
     const timer = setTimeout(() => {
-      setAnimationClass('animate-jelly');
+      setAnimationClass('animate-squash-drop');
     }, 500);
     return () => clearTimeout(timer);
   };
@@ -139,6 +139,17 @@ export default function Home() {
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
       
+      {/* Hidden SVG Gooey Filter Definition */}
+      <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
+
       {/* Background Ambience / Blur */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-zinc-800/30 rounded-full blur-[120px]"></div>
@@ -155,15 +166,34 @@ export default function Home() {
             <span className="font-bold text-lg tracking-tight text-zinc-950">Wazle</span>
           </div>
           
-          {/* Tabs Menu */}
-          <div className="hidden md:flex items-center gap-1 bg-zinc-200/50 p-1 rounded-full border border-zinc-300/30 text-[11px] font-semibold text-zinc-650">
+          {/* Tabs Menu with Gooey Distortion Slide */}
+          <div className="hidden md:flex relative items-center bg-zinc-200/50 p-1 rounded-full border border-zinc-300/30 text-[11px] font-semibold text-zinc-650 w-[520px]">
+            
+            {/* Gooey background layer */}
+            <div className="absolute inset-0 flex items-center p-1 pointer-events-none" style={{ filter: 'url(#goo)' }}>
+              {(['home', 'features', 'pricing', 'tickets', 'download'] as Tab[]).map((tab) => (
+                <div key={`bg-${tab}`} className="flex-1 h-full relative flex items-center justify-center">
+                  {activeTab === tab && (
+                    <motion.div
+                      layoutId="gooey-pill"
+                      className="absolute inset-0 bg-zinc-950 rounded-full w-full h-full"
+                      transition={{ type: 'spring', stiffness: 140, damping: 14 }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Foreground text buttons */}
             {(['home', 'features', 'pricing', 'tickets', 'download'] as Tab[]).map((tab) => (
               <button 
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full transition-all capitalize ${activeTab === tab ? 'bg-zinc-950 text-white shadow-sm' : 'hover:text-zinc-950'}`}
+                className={`relative z-10 flex-1 text-center py-1.5 rounded-full transition-colors duration-300 capitalize ${
+                  activeTab === tab ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
+                }`}
               >
-                {tab === 'tickets' ? 'support tickets' : tab}
+                {tab === 'tickets' ? 'support' : tab}
               </button>
             ))}
           </div>
@@ -435,7 +465,7 @@ export default function Home() {
                 {/* Desktop/Tablet Left: Contact Info */}
                 <div className="hidden md:block space-y-1.5 text-left">
                   <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Contact</h4>
-                  <div className="text-[9px] text-zinc-350 space-y-0.5">
+                  <div className="text-[9px] text-zinc-355 space-y-0.5">
                     <p>Support WA: +62 882-0086-77172</p>
                     <p>Email: support@wazle.my.id</p>
                   </div>
@@ -480,7 +510,7 @@ export default function Home() {
                     <span>•</span>
                     <span>Email: support@wazle.my.id</span>
                   </div>
-                  <div className="flex justify-center gap-3.5 text-[8px] font-semibold text-zinc-350">
+                  <div className="flex justify-center gap-3.5 text-[8px] font-semibold text-zinc-355">
                     <button onClick={() => setActiveTab('home')} className="hover:text-white transition-colors">Home</button>
                     <button onClick={() => setActiveTab('features')} className="hover:text-white transition-colors">Features</button>
                     <button onClick={() => setActiveTab('pricing')} className="hover:text-white transition-colors">Pricing</button>
@@ -538,21 +568,35 @@ export default function Home() {
           100% { transform: translateY(0); }
         }
 
-        @keyframes jelly-wobble {
-          0% { transform: scale(1, 1); }
-          30% { transform: scale(1.06, 0.94); }
-          45% { transform: scale(0.96, 1.04); }
-          60% { transform: scale(1.02, 0.98); }
-          75% { transform: scale(0.99, 1.01); }
-          100% { transform: scale(1, 1); }
+        @keyframes squash-stretch-drop {
+          0% {
+            transform: translateY(-22px) scaleY(1.18) scaleX(0.82);
+            transform-origin: bottom;
+          }
+          40% {
+            transform: translateY(0) scaleY(0.68) scaleX(1.32);
+            transform-origin: bottom;
+          }
+          65% {
+            transform: translateY(-8px) scaleY(1.12) scaleX(0.88);
+            transform-origin: bottom;
+          }
+          85% {
+            transform: translateY(0) scaleY(0.96) scaleX(1.04);
+            transform-origin: bottom;
+          }
+          100% {
+            transform: translateY(0) scaleY(1) scaleX(1);
+            transform-origin: bottom;
+          }
         }
 
         .animate-anticipation {
           animation: anticipation-up 0.5s ease-in-out forwards;
         }
 
-        .animate-jelly {
-          animation: jelly-wobble 0.6s ease-in-out forwards;
+        .animate-squash-drop {
+          animation: squash-stretch-drop 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
       `}} />
 
