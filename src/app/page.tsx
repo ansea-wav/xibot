@@ -22,6 +22,47 @@ export default function Home() {
   const [ticketForm, setTicketForm] = useState({ name: '', whatsapp: '', subject: '', message: '' });
   const [ticketStatus, setTicketStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
 
+  // Collapsible Footer States & Animations
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [animationClass, setAnimationClass] = useState('');
+
+  const triggerExpand = () => {
+    if (isExpanded) return;
+    setIsExpanded(true);
+    setAnimationClass('animate-anticipation');
+    const timer = setTimeout(() => {
+      setAnimationClass('animate-jelly');
+    }, 500);
+    return () => clearTimeout(timer);
+  };
+
+  const triggerCollapse = () => {
+    setIsExpanded(false);
+    setAnimationClass('');
+  };
+
+  // Trigger after 2 seconds on mount, auto-collapsing after 4 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      triggerExpand();
+      const collapseTimer = setTimeout(() => {
+        triggerCollapse();
+      }, 4000);
+      return () => clearTimeout(collapseTimer);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handle scroll trigger inside the sheet
+  const handleContentScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollTop > 15) {
+      triggerExpand();
+    } else if (target.scrollTop <= 5) {
+      triggerCollapse();
+    }
+  };
+
   // Check login state (localStorage + Shared Cookie)
   useEffect(() => {
     let saved = localStorage.getItem('yay_user_phone');
@@ -104,7 +145,7 @@ export default function Home() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-700/20 rounded-full blur-[120px]"></div>
       </div>
 
-      {/* Floating Main Sheet Container with explicit viewport height constraint */}
+      {/* Floating Main Sheet Container with viewport constraint */}
       <div className="relative z-10 w-full h-full max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden">
         
         {/* Navigation Bar inside Sheet */}
@@ -146,8 +187,11 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* Scrollable Main Content inside Sheet (Hidden scrollbar for pure sheet feel) */}
-        <div className="flex-1 overflow-y-auto no-scrollbar px-6 sm:px-12 py-4 md:py-6 flex flex-col justify-center">
+        {/* Scrollable Main Content inside Sheet */}
+        <div 
+          onScroll={handleContentScroll}
+          className="flex-1 overflow-y-auto no-scrollbar px-6 sm:px-12 py-4 md:py-6 flex flex-col justify-center"
+        >
           
           <AnimatePresence mode="wait">
             {activeTab === 'home' && (
@@ -238,7 +282,7 @@ export default function Home() {
                         {p.features.map((feat, idx) => (
                           <div key={idx} className="flex items-start gap-1.5">
                             <span className={`material-symbols-outlined text-[12px] shrink-0 ${p.popular ? 'text-white' : 'text-zinc-900'}`}>check_circle</span>
-                            <span className={`text-[9px] leading-tight ${p.popular ? 'text-zinc-300' : 'text-zinc-650'}`}>{feat}</span>
+                            <span className={`text-[9px] leading-tight ${p.popular ? 'text-zinc-300' : 'text-zinc-655'}`}>{feat}</span>
                           </div>
                         ))}
                       </div>
@@ -367,59 +411,76 @@ export default function Home() {
           
         </div>
 
-        {/* Premium Monochrome Footer inside Sheet (Reduced padding & height) */}
-        <footer className="bg-[#121214] text-white rounded-t-[2.5rem] p-5 sm:p-6 md:px-10 py-4.5 flex flex-col gap-4 shrink-0 relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.15)]">
-          {/* Logo element sitting on top split line */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
-            {/* Left Col: Contact Info */}
-            <div className="space-y-2 text-left">
-              <h4 className="text-zinc-400 font-bold text-[10px] uppercase tracking-wider">Contact</h4>
-              <div className="text-[10px] text-zinc-355 space-y-0.5">
-                <p>Support WA: +62 882-0086-77172</p>
-                <p>Email: support@wazle.my.id</p>
-              </div>
-              <div className="flex gap-3 text-[9px] text-zinc-400">
-                <a href="https://facebook.com" className="hover:text-white transition-colors flex items-center gap-0.5">Facebook <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
-                <a href="https://instagram.com" className="hover:text-white transition-colors flex items-center gap-0.5">Instagram <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
-                <a href="https://linkedin.com" className="hover:text-white transition-colors flex items-center gap-0.5">LinkedIn <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
-              </div>
+        {/* Collapsible Monochrome Footer (Hover, Scroll & Time triggered wobble) */}
+        <footer 
+          onMouseEnter={triggerExpand}
+          onMouseLeave={triggerCollapse}
+          className={`bg-[#121214] text-white rounded-t-[2.5rem] shrink-0 relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.25)] transition-all duration-500 overflow-hidden flex flex-col justify-between ${
+            isExpanded 
+              ? `h-[225px] md:h-[180px] p-5 sm:p-6 md:px-10 py-4.5 ${animationClass}`
+              : 'h-[40px] py-2.5 flex items-center justify-center cursor-pointer p-0 select-none'
+          }`}
+        >
+          {!isExpanded ? (
+            <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
+              <span>Wazle @2026</span>
+              <span className="material-symbols-outlined text-[12px] animate-bounce">keyboard_arrow_up</span>
             </div>
+          ) : (
+            <div className="w-full flex flex-col justify-between h-full">
+              {/* Logo element sitting on top split line */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+                {/* Left Col: Contact Info */}
+                <div className="space-y-2 text-left">
+                  <h4 className="text-zinc-400 font-bold text-[10px] uppercase tracking-wider">Contact</h4>
+                  <div className="text-[10px] text-zinc-355 space-y-0.5">
+                    <p>Support WA: +62 882-0086-77172</p>
+                    <p>Email: support@wazle.my.id</p>
+                  </div>
+                  <div className="flex gap-3 text-[9px] text-zinc-400">
+                    <a href="https://facebook.com" className="hover:text-white transition-colors flex items-center gap-0.5">Facebook <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
+                    <a href="https://instagram.com" className="hover:text-white transition-colors flex items-center gap-0.5">Instagram <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
+                    <a href="https://linkedin.com" className="hover:text-white transition-colors flex items-center gap-0.5">LinkedIn <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
+                  </div>
+                </div>
 
-            {/* Center Col: Organic White Logo & Slogan */}
-            <div className="flex flex-col items-center text-center space-y-1.5 md:absolute md:left-1/2 md:-translate-x-1/2">
-              <svg className="w-8 h-8 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 15C52 35 65 48 85 50C65 52 52 65 50 85C48 65 35 52 15 50C35 48 48 35 50 15Z" fill="currentColor"/>
-                <circle cx="50" cy="50" r="8" fill="#121214"/>
-              </svg>
-              <div className="font-extrabold text-xs tracking-widest uppercase">Wazle</div>
-              <div className="text-[9px] text-zinc-400 font-medium tracking-wide">The Ultimate Bot Infrastructure</div>
-              
-              <div className="flex items-center gap-2 pt-1">
-                <button onClick={() => setShowLogin(true)} className="px-3.5 py-1 bg-white text-zinc-950 font-bold rounded-full text-[9px] hover:bg-zinc-100 transition-colors">Start Free</button>
-                <button onClick={() => setActiveTab('download')} className="px-3.5 py-1 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[9px] hover:bg-zinc-800 transition-colors">Download App</button>
+                {/* Center Col: Organic White Logo & Slogan */}
+                <div className="flex flex-col items-center text-center space-y-1.5 md:absolute md:left-1/2 md:-translate-x-1/2">
+                  <svg className="w-8 h-8 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 15C52 35 65 48 85 50C65 52 52 65 50 85C48 65 35 52 15 50C35 48 48 35 50 15Z" fill="currentColor"/>
+                    <circle cx="50" cy="50" r="8" fill="#121214"/>
+                  </svg>
+                  <div className="font-extrabold text-xs tracking-widest uppercase">Wazle</div>
+                  <div className="text-[9px] text-zinc-400 font-medium tracking-wide">The Ultimate Bot Infrastructure</div>
+                  
+                  <div className="flex items-center gap-2 pt-1">
+                    <button onClick={() => setShowLogin(true)} className="px-3.5 py-1 bg-white text-zinc-950 font-bold rounded-full text-[9px] hover:bg-zinc-100 transition-colors">Start Free</button>
+                    <button onClick={() => setActiveTab('download')} className="px-3.5 py-1 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[9px] hover:bg-zinc-800 transition-colors">Download App</button>
+                  </div>
+                </div>
+
+                {/* Right Col: Quick Links */}
+                <div className="space-y-2 text-left md:text-right">
+                  <h4 className="text-zinc-400 font-bold text-[10px] uppercase tracking-wider">Quick Links</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-1 gap-x-4 gap-y-0.5 text-[10px] text-zinc-300">
+                    <button onClick={() => setActiveTab('home')} className="hover:text-white text-left md:text-right transition-colors">Home</button>
+                    <button onClick={() => setActiveTab('features')} className="hover:text-white text-left md:text-right transition-colors">Features</button>
+                    <button onClick={() => setActiveTab('pricing')} className="hover:text-white text-left md:text-right transition-colors">Pricing</button>
+                    <button onClick={() => setActiveTab('tickets')} className="hover:text-white text-left md:text-right transition-colors">Support Tickets</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom row */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[9px] text-zinc-500">
+                <p>© 2026 Wazle. All rights reserved.</p>
+                <div className="flex gap-3">
+                  <a href="#" className="hover:text-zinc-300 transition-colors">Cookies policy</a>
+                  <a href="#" className="hover:text-zinc-300 transition-colors">Privacy policy</a>
+                </div>
               </div>
             </div>
-
-            {/* Right Col: Quick Links */}
-            <div className="space-y-2 text-left md:text-right">
-              <h4 className="text-zinc-400 font-bold text-[10px] uppercase tracking-wider">Quick Links</h4>
-              <div className="grid grid-cols-2 md:grid-cols-1 gap-x-4 gap-y-0.5 text-[10px] text-zinc-300">
-                <button onClick={() => setActiveTab('home')} className="hover:text-white text-left md:text-right transition-colors">Home</button>
-                <button onClick={() => setActiveTab('features')} className="hover:text-white text-left md:text-right transition-colors">Features</button>
-                <button onClick={() => setActiveTab('pricing')} className="hover:text-white text-left md:text-right transition-colors">Pricing</button>
-                <button onClick={() => setActiveTab('tickets')} className="hover:text-white text-left md:text-right transition-colors">Support Tickets</button>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom row */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[9px] text-zinc-500">
-            <p>© 2026 Wazle. All rights reserved.</p>
-            <div className="flex gap-3">
-              <a href="#" className="hover:text-zinc-300 transition-colors">Cookies policy</a>
-              <a href="#" className="hover:text-zinc-300 transition-colors">Privacy policy</a>
-            </div>
-          </div>
+          )}
         </footer>
 
       </div>
@@ -450,6 +511,30 @@ export default function Home() {
       <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar { display: none !important; }
         .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+        @keyframes anticipation-up {
+          0% { transform: translateY(0); }
+          30% { transform: translateY(12px); }
+          75% { transform: translateY(-6px); }
+          100% { transform: translateY(0); }
+        }
+
+        @keyframes jelly-wobble {
+          0% { transform: scale(1, 1); }
+          30% { transform: scale(1.06, 0.94); }
+          45% { transform: scale(0.96, 1.04); }
+          60% { transform: scale(1.02, 0.98); }
+          75% { transform: scale(0.99, 1.01); }
+          100% { transform: scale(1, 1); }
+        }
+
+        .animate-anticipation {
+          animation: anticipation-up 0.5s ease-in-out forwards;
+        }
+
+        .animate-jelly {
+          animation: jelly-wobble 0.6s ease-in-out forwards;
+        }
       `}} />
 
     </div>
