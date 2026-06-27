@@ -282,7 +282,7 @@ export default function Home() {
                         {p.features.map((feat, idx) => (
                           <div key={idx} className="flex items-start gap-1.5">
                             <span className={`material-symbols-outlined text-[12px] shrink-0 ${p.popular ? 'text-white' : 'text-zinc-900'}`}>check_circle</span>
-                            <span className={`text-[9px] leading-tight ${p.popular ? 'text-zinc-300' : 'text-zinc-655'}`}>{feat}</span>
+                            <span className={`text-[9px] leading-tight ${p.popular ? 'text-zinc-300' : 'text-zinc-650'}`}>{feat}</span>
                           </div>
                         ))}
                       </div>
@@ -411,13 +411,13 @@ export default function Home() {
           
         </div>
 
-        {/* Collapsible Monochrome Footer (Hover, Scroll & Time triggered wobble) */}
+        {/* Responsive Collapsible Monochrome Footer */}
         <footer 
           onMouseEnter={triggerExpand}
           onMouseLeave={triggerCollapse}
-          className={`bg-[#121214] text-white rounded-t-[2.5rem] shrink-0 relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.25)] transition-all duration-500 overflow-hidden flex flex-col justify-between ${
+          className={`bg-[#121214] text-white rounded-t-[2rem] w-full shrink-0 relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.25)] transition-all duration-500 overflow-hidden flex flex-col justify-between ${
             isExpanded 
-              ? `h-[225px] md:h-[180px] p-5 sm:p-6 md:px-10 py-4.5 ${animationClass}`
+              ? `h-[155px] sm:h-[180px] md:h-[180px] p-4.5 sm:p-5 md:px-10 py-4.5 ${animationClass}`
               : 'h-[40px] py-2.5 flex items-center justify-center cursor-pointer p-0 select-none'
           }`}
         >
@@ -427,54 +427,73 @@ export default function Home() {
               <span className="material-symbols-outlined text-[12px] animate-bounce">keyboard_arrow_up</span>
             </div>
           ) : (
-            <div className="w-full flex flex-col justify-between h-full">
-              {/* Logo element sitting on top split line */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
-                {/* Left Col: Contact Info */}
-                <div className="space-y-2 text-left">
-                  <h4 className="text-zinc-400 font-bold text-[10px] uppercase tracking-wider">Contact</h4>
-                  <div className="text-[10px] text-zinc-355 space-y-0.5">
+            <div className="w-full flex flex-col justify-between h-full text-center md:text-left gap-3">
+              
+              {/* Upper Section */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-zinc-850">
+                
+                {/* Desktop/Tablet Left: Contact Info */}
+                <div className="hidden md:block space-y-1.5 text-left">
+                  <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Contact</h4>
+                  <div className="text-[9px] text-zinc-350 space-y-0.5">
                     <p>Support WA: +62 882-0086-77172</p>
                     <p>Email: support@wazle.my.id</p>
                   </div>
-                  <div className="flex gap-3 text-[9px] text-zinc-400">
-                    <a href="https://facebook.com" className="hover:text-white transition-colors flex items-center gap-0.5">Facebook <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
-                    <a href="https://instagram.com" className="hover:text-white transition-colors flex items-center gap-0.5">Instagram <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
-                    <a href="https://linkedin.com" className="hover:text-white transition-colors flex items-center gap-0.5">LinkedIn <span className="material-symbols-outlined text-[8px]">arrow_outward</span></a>
+                  <div className="flex gap-2.5 text-[8px] text-zinc-450">
+                    <a href="https://facebook.com" className="hover:text-white transition-colors">Facebook</a>
+                    <a href="https://instagram.com" className="hover:text-white transition-colors">Instagram</a>
+                    <a href="https://linkedin.com" className="hover:text-white transition-colors">LinkedIn</a>
                   </div>
                 </div>
 
-                {/* Center Col: Organic White Logo & Slogan */}
-                <div className="flex flex-col items-center text-center space-y-1.5 md:absolute md:left-1/2 md:-translate-x-1/2">
-                  <svg className="w-8 h-8 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Center: Logo & Slogan (Always centered) */}
+                <div className="flex flex-col items-center text-center space-y-1 md:absolute md:left-1/2 md:-translate-x-1/2">
+                  <svg className="w-6 h-6 text-white" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 15C52 35 65 48 85 50C65 52 52 65 50 85C48 65 35 52 15 50C35 48 48 35 50 15Z" fill="currentColor"/>
                     <circle cx="50" cy="50" r="8" fill="#121214"/>
                   </svg>
-                  <div className="font-extrabold text-xs tracking-widest uppercase">Wazle</div>
-                  <div className="text-[9px] text-zinc-400 font-medium tracking-wide">The Ultimate Bot Infrastructure</div>
+                  <div className="font-extrabold text-[11px] tracking-widest uppercase">Wazle</div>
+                  <div className="text-[8px] text-zinc-400 font-medium tracking-wide">The Ultimate Bot Infrastructure</div>
                   
-                  <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => setShowLogin(true)} className="px-3.5 py-1 bg-white text-zinc-950 font-bold rounded-full text-[9px] hover:bg-zinc-100 transition-colors">Start Free</button>
-                    <button onClick={() => setActiveTab('download')} className="px-3.5 py-1 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[9px] hover:bg-zinc-800 transition-colors">Download App</button>
+                  {/* Action buttons shown on tablet/desktop */}
+                  <div className="hidden sm:flex items-center gap-1.5 pt-0.5">
+                    <button onClick={() => setShowLogin(true)} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">Start Free</button>
+                    <button onClick={() => setActiveTab('download')} className="px-2.5 py-0.5 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[8px] hover:bg-zinc-800 transition-colors">Download App</button>
                   </div>
                 </div>
 
-                {/* Right Col: Quick Links */}
-                <div className="space-y-2 text-left md:text-right">
-                  <h4 className="text-zinc-400 font-bold text-[10px] uppercase tracking-wider">Quick Links</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-1 gap-x-4 gap-y-0.5 text-[10px] text-zinc-300">
-                    <button onClick={() => setActiveTab('home')} className="hover:text-white text-left md:text-right transition-colors">Home</button>
-                    <button onClick={() => setActiveTab('features')} className="hover:text-white text-left md:text-right transition-colors">Features</button>
-                    <button onClick={() => setActiveTab('pricing')} className="hover:text-white text-left md:text-right transition-colors">Pricing</button>
-                    <button onClick={() => setActiveTab('tickets')} className="hover:text-white text-left md:text-right transition-colors">Support Tickets</button>
+                {/* Desktop/Tablet Right: Quick Links */}
+                <div className="hidden md:block space-y-1.5 text-right">
+                  <h4 className="text-zinc-400 font-bold text-[9px] uppercase tracking-wider">Quick Links</h4>
+                  <div className="space-y-0.5 text-[9px] text-zinc-300">
+                    <button onClick={() => setActiveTab('home')} className="block hover:text-white ml-auto transition-colors">Home</button>
+                    <button onClick={() => setActiveTab('features')} className="block hover:text-white ml-auto transition-colors">Features</button>
+                    <button onClick={() => setActiveTab('pricing')} className="block hover:text-white ml-auto transition-colors">Pricing</button>
+                    <button onClick={() => setActiveTab('tickets')} className="block hover:text-white ml-auto transition-colors">Support Tickets</button>
                   </div>
                 </div>
+
+                {/* Mobile-Only Row (Contact & Links combined inline) */}
+                <div className="md:hidden flex flex-col items-center gap-2.5 w-full pt-1.5">
+                  <div className="flex flex-wrap justify-center gap-x-3 text-[8px] text-zinc-400">
+                    <span>WA: +62 882-0086-77172</span>
+                    <span>•</span>
+                    <span>Email: support@wazle.my.id</span>
+                  </div>
+                  <div className="flex justify-center gap-3.5 text-[8px] font-semibold text-zinc-350">
+                    <button onClick={() => setActiveTab('home')} className="hover:text-white transition-colors">Home</button>
+                    <button onClick={() => setActiveTab('features')} className="hover:text-white transition-colors">Features</button>
+                    <button onClick={() => setActiveTab('pricing')} className="hover:text-white transition-colors">Pricing</button>
+                    <button onClick={() => setActiveTab('tickets')} className="hover:text-white transition-colors">Support</button>
+                  </div>
+                </div>
+
               </div>
 
-              {/* Bottom row */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[9px] text-zinc-500">
+              {/* Bottom Row (Copyright & Policy) */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[8px] text-zinc-500">
                 <p>© 2026 Wazle. All rights reserved.</p>
-                <div className="flex gap-3">
+                <div className="flex gap-2.5">
                   <a href="#" className="hover:text-zinc-300 transition-colors">Cookies policy</a>
                   <a href="#" className="hover:text-zinc-300 transition-colors">Privacy policy</a>
                 </div>
