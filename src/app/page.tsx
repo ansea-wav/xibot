@@ -118,14 +118,17 @@ export default function Home() {
 
   // Trigger after 2 seconds on mount, auto-collapsing after 4 seconds
   useEffect(() => {
+    let collapseTimer: NodeJS.Timeout;
     const timer = setTimeout(() => {
       triggerExpand();
-      const collapseTimer = setTimeout(() => {
+      collapseTimer = setTimeout(() => {
         triggerCollapse();
       }, 4000);
-      return () => clearTimeout(collapseTimer);
     }, 2000);
-    return () => setTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (collapseTimer) clearTimeout(collapseTimer);
+    };
   }, []);
 
   // Handle scroll trigger inside the sheet
