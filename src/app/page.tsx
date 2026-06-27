@@ -100,6 +100,35 @@ export default function Home() {
     };
   }, [isLocked]);
 
+  // Mobile Fullscreen on first user gesture
+  useEffect(() => {
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (!isTouch) return;
+
+    const enterFullscreen = () => {
+      const doc = document.documentElement;
+      if (doc.requestFullscreen) {
+        doc.requestFullscreen().catch(() => {});
+      } else if ((doc as any).webkitRequestFullscreen) {
+        (doc as any).webkitRequestFullscreen();
+      } else if ((doc as any).msRequestFullscreen) {
+        (doc as any).msRequestFullscreen();
+      }
+      
+      // Clean up listeners immediately after first tap
+      window.removeEventListener('click', enterFullscreen);
+      window.removeEventListener('touchstart', enterFullscreen);
+    };
+
+    window.addEventListener('click', enterFullscreen);
+    window.addEventListener('touchstart', enterFullscreen);
+
+    return () => {
+      window.removeEventListener('click', enterFullscreen);
+      window.removeEventListener('touchstart', enterFullscreen);
+    };
+  }, []);
+
   // Monitor window size for responsive spring heights
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -216,7 +245,7 @@ export default function Home() {
 
   // Completely empty DOM if cleared by security lock
   if (isDOMCleared) {
-    return <div className="h-screen w-screen bg-[#0d0d11]" />;
+    return <div className="h-screen h-[100dvh] w-screen bg-[#0d0d11]" />;
   }
 
   // Determine current height based on active breakpoint
@@ -224,7 +253,7 @@ export default function Home() {
   const currentFooterHeight = isExpanded ? targetExpandedHeight : 40;
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
+    <div className="h-screen h-[100dvh] w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
       
       {/* Hidden SVG Gooey Filter Definition */}
       <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
@@ -255,7 +284,7 @@ export default function Home() {
           mass: 0.8
         }}
         style={{ transformOrigin: 'center' }}
-        className="relative z-10 w-full h-full max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
+        className="relative z-10 w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
       >
         
         {/* Navigation Bar inside Sheet */}
