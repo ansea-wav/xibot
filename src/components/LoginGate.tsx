@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { UserMasterData } from '@/lib/api';
+import { setSharedCookie } from '@/lib/cookies';
 
 interface LoginGateProps {
   onLoginSuccess: (data: UserMasterData, userId: string) => void;
@@ -70,6 +71,7 @@ export default function LoginGate({ onLoginSuccess, isMobile }: LoginGateProps) 
         const masterData = result.data || result;
         if (masterData && masterData.registry) {
           localStorage.setItem('yay_user_phone', phone);
+          setSharedCookie('yay_user_phone', phone);
           onLoginSuccess(masterData as UserMasterData, masterData.registry.User_ID);
         } else {
           setError('Data user tidak valid.');
