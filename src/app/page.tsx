@@ -302,16 +302,30 @@ export default function Home() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
                   {[
-                    { name: 'Free', price: 'Gratis', desc: 'Sempurna untuk coba-coba', features: ['1 Auto Responder', 'No File Upload', 'Limited API', '1 Linked Group'] },
-                    { name: 'Basic', price: 'Rp 2.000', desc: 'Cocok untuk grup kecil', features: ['5 Auto Responders', '500 KB Max Upload', '50 MB Storage', '1 Linked Group'] },
-                    { name: 'Standard', price: 'Rp 5.000', desc: 'Sempurna untuk grup aktif', popular: true, features: ['25 Auto Responders', '5 MB Max Upload', '500 MB Storage', '2 Linked Groups'] },
-                    { name: 'Premium', price: 'Rp 20.000', desc: 'Bisnis & komunitas besar', features: ['100 Auto Responders', '15 MB Max Upload', '1000 MB Storage', '5 Linked Groups'] }
+                    { name: 'Free', price: 'Gratis', originalPrice: null, discountTag: null, desc: 'Sempurna untuk coba-coba', features: ['1 Auto Responder', 'No File Upload', 'Limited API', '1 Linked Group'] },
+                    { name: 'Basic', price: 'Rp 500', originalPrice: 'Rp 2.000', discountTag: '75% OFF', desc: 'Cocok untuk grup kecil', features: ['5 Auto Responders', '500 KB Max Upload', '50 MB Storage', '1 Linked Group'] },
+                    { name: 'Standard', price: 'Rp 1.000', originalPrice: 'Rp 5.000', discountTag: '80% OFF', desc: 'Sempurna untuk grup aktif', popular: true, features: ['25 Auto Responders', '5 MB Max Upload', '500 MB Storage', '2 Linked Groups'] },
+                    { name: 'Premium', price: 'Rp 8.000', originalPrice: 'Rp 20.000', discountTag: '50% + 20% OFF', desc: 'Bisnis & komunitas besar', features: ['100 Auto Responders', '15 MB Max Upload', '1000 MB Storage', '5 Linked Groups'] }
                   ].map((p, i) => (
                     <div key={i} className={`p-4 rounded-2xl border ${p.popular ? 'border-zinc-950 bg-zinc-950 text-white shadow-lg relative' : 'border-zinc-200 bg-white text-zinc-950 shadow-sm'}`}>
                       {p.popular && <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-white text-zinc-950 text-[8px] font-black rounded-full uppercase tracking-wider border border-zinc-200">Popular</div>}
-                      <h3 className="text-sm font-bold mb-0.5">{p.name}</h3>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <h3 className="text-sm font-bold">{p.name}</h3>
+                        {p.discountTag && (
+                          <span className={`text-[7px] font-black px-1.5 py-0.5 rounded-full ${p.popular ? 'bg-white text-zinc-950' : 'bg-zinc-950 text-white'}`}>
+                            {p.discountTag}
+                          </span>
+                        )}
+                      </div>
                       <p className={`text-[9px] mb-2.5 h-5 overflow-hidden ${p.popular ? 'text-zinc-400' : 'text-zinc-500'}`}>{p.desc}</p>
-                      <div className="text-xl font-black mb-3">{p.price}</div>
+                      
+                      <div className="flex items-baseline gap-1.5 mb-3">
+                        <div className="text-xl font-black">{p.price}</div>
+                        {p.originalPrice && (
+                          <div className={`text-[10px] line-through ${p.popular ? 'text-zinc-500' : 'text-zinc-400'}`}>{p.originalPrice}</div>
+                        )}
+                        <span className={`text-[8px] ${p.popular ? 'text-zinc-500' : 'text-zinc-400'}`}>/m</span>
+                      </div>
                       
                       <div className="space-y-1.5 mb-4">
                         {p.features.map((feat, idx) => (
@@ -344,7 +358,7 @@ export default function Home() {
               >
                 <div className="text-center mb-4">
                   <h2 className="text-2xl font-extrabold text-zinc-950">Submit Ticket</h2>
-                  <p className="text-zinc-500 text-[11px] mt-0.5">Need help? Send us a message and we'll get back to you.</p>
+                  <p className="text-zinc-550 text-[11px] mt-0.5">Need help? Send us a message and we'll get back to you.</p>
                 </div>
 
                 {ticketStatus === 'success' ? (
