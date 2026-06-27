@@ -40,10 +40,11 @@ export default function Home() {
       }, 700);
     };
 
-    // 1. Block right click context menu
+    // 1. Block right click context menu on desktop, but allow on mobile touch hold-press
     const preventRightClick = (e: MouseEvent) => {
-      e.preventDefault();
-      handleLock();
+      const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      if (isTouch) return;
+      e.preventDefault(); // Prevent native right-click menu on desktop, but do NOT lock yet
     };
     window.addEventListener('contextmenu', preventRightClick);
 
@@ -124,7 +125,7 @@ export default function Home() {
       }, 4000);
       return () => clearTimeout(collapseTimer);
     }, 2000);
-    return () => clearTimeout(timer);
+    return () => setTimeout(timer);
   }, []);
 
   // Handle scroll trigger inside the sheet
@@ -334,7 +335,7 @@ export default function Home() {
                 <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-950 leading-tight">
                   The Ultimate<br/>Infrastructure<br/>For Your Bots.
                 </h1>
-                <p className="text-xs sm:text-sm text-zinc-500 max-w-lg mx-auto leading-relaxed">
+                <p className="text-xs sm:text-sm text-zinc-550 max-w-lg mx-auto leading-relaxed">
                   Lightning-fast hosting designed for Discord and Telegram bots. Experience professional-grade reliability, secure infrastructure, and instant deployment.
                 </p>
                 <div className="flex items-center justify-center gap-3 pt-2">
