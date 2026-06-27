@@ -26,6 +26,79 @@ export default function Home() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [windowWidth, setWindowWidth] = useState(1200);
 
+  // DevTools / Security Lock States
+  const [isLocked, setIsLocked] = useState(false);
+  const [isDOMCleared, setIsDOMCleared] = useState(false);
+
+  // Security Lock logic (inspect elements blocker)
+  useEffect(() => {
+    const handleLock = () => {
+      if (isLocked) return;
+      setIsLocked(true);
+      setTimeout(() => {
+        setIsDOMCleared(true);
+      }, 700);
+    };
+
+    // 1. Block right click context menu
+    const preventRightClick = (e: MouseEvent) => {
+      e.preventDefault();
+      handleLock();
+    };
+    window.addEventListener('contextmenu', preventRightClick);
+
+    // 2. Block keyboard inspector hotkeys (F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U)
+    const handleKeydown = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      
+      if (e.key === 'F12') {
+        e.preventDefault();
+        handleLock();
+      }
+      
+      if ((e.ctrlKey && e.shiftKey && e.key === 'I') || (isMac && e.metaKey && e.altKey && e.key === 'i')) {
+        e.preventDefault();
+        handleLock();
+      }
+
+      if ((e.ctrlKey && e.shiftKey && e.key === 'C') || (isMac && e.metaKey && e.altKey && e.key === 'c')) {
+        e.preventDefault();
+        handleLock();
+      }
+
+      if ((e.ctrlKey && e.shiftKey && e.key === 'J') || (isMac && e.metaKey && e.altKey && e.key === 'j')) {
+        e.preventDefault();
+        handleLock();
+      }
+
+      if ((e.ctrlKey && e.key === 'u') || (isMac && e.metaKey && e.key === 'u')) {
+        e.preventDefault();
+        handleLock();
+      }
+    };
+    window.addEventListener('keydown', handleKeydown);
+
+    // 3. Detect DevTools size thresholds (e.g. docked inspectors)
+    const checkDevTools = () => {
+      const threshold = 160;
+      const widthDev = window.outerWidth - window.innerWidth > threshold;
+      const heightDev = window.outerHeight - window.innerHeight > threshold;
+      
+      if (widthDev || heightDev) {
+        handleLock();
+      }
+    };
+    const devToolsInterval = setInterval(checkDevTools, 1000);
+    window.addEventListener('resize', checkDevTools);
+
+    return () => {
+      window.removeEventListener('contextmenu', preventRightClick);
+      window.removeEventListener('keydown', handleKeydown);
+      clearInterval(devToolsInterval);
+      window.removeEventListener('resize', checkDevTools);
+    };
+  }, [isLocked]);
+
   // Monitor window size for responsive spring heights
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -137,6 +210,11 @@ export default function Home() {
     }, 1000);
   };
 
+  // Completely empty DOM if cleared by security lock
+  if (isDOMCleared) {
+    return <div className="h-screen w-screen bg-[#0d0d11]" />;
+  }
+
   // Determine current height based on active breakpoint
   const targetExpandedHeight = windowWidth < 768 ? 155 : 180;
   const currentFooterHeight = isExpanded ? targetExpandedHeight : 40;
@@ -161,8 +239,20 @@ export default function Home() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-700/20 rounded-full blur-[120px]"></div>
       </div>
 
-      {/* Floating Main Sheet Container with viewport constraint */}
-      <div className="relative z-10 w-full h-full max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden">
+      {/* Floating Main Sheet Container with viewport and security scaleY constraints */}
+      <motion.div 
+        animate={{
+          scaleY: isLocked ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 18,
+          mass: 0.8
+        }}
+        style={{ transformOrigin: 'center' }}
+        className="relative z-10 w-full h-full max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
+      >
         
         {/* Navigation Bar inside Sheet */}
         <nav className="px-6 sm:px-8 py-4 border-b border-zinc-200/50 flex items-center justify-between shrink-0 bg-[#fdfcf7]/80 backdrop-blur-md z-20">
@@ -581,7 +671,7 @@ export default function Home() {
           </motion.div>
         </motion.footer>
 
-      </div>
+      </motion.div>
 
       {/* Login Modal */}
       <AnimatePresence>
