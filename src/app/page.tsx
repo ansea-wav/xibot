@@ -627,9 +627,9 @@ export default function Home() {
                   <p className="text-zinc-500 text-[11px] mt-0.5">{t.pricingDesc}</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
+                <div className="grid grid-cols-1 gap-3 items-start sm:grid-cols-2 sm:items-stretch lg:grid-cols-4">
                   {packages.map((p, i) => (
-                    <div key={i} className={`p-4 rounded-2xl border ${p.popular ? 'border-zinc-950 bg-zinc-950 text-white shadow-lg relative' : 'border-zinc-200 bg-white text-zinc-950 shadow-sm'}`}>
+                    <div key={i} className={`p-4 rounded-2xl border flex flex-col sm:h-full ${p.popular ? 'border-zinc-950 bg-zinc-950 text-white shadow-lg relative' : 'border-zinc-200 bg-white text-zinc-950 shadow-sm'}`}>
                       {p.popular && <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-white text-zinc-950 text-[8px] font-black rounded-full uppercase tracking-wider border border-zinc-200">{t.popular}</div>}
                       <div className="flex items-center justify-between mb-0.5">
                         <h3 className="text-sm font-bold">{p.name}</h3>
@@ -660,7 +660,7 @@ export default function Home() {
                       
                       <button 
                         onClick={() => setShowLogin(true)}
-                        className={`w-full py-2 rounded-xl text-[10px] font-bold transition-all active:scale-95 ${p.popular ? 'bg-white text-zinc-950 hover:bg-zinc-100' : 'bg-zinc-950 text-white hover:bg-zinc-900'}`}
+                        className={`w-full py-2 rounded-xl text-[10px] font-bold transition-all active:scale-95 mt-auto ${p.popular ? 'bg-white text-zinc-950 hover:bg-zinc-100' : 'bg-zinc-950 text-white hover:bg-zinc-900'}`}
                       >
                         {t.selectPlan}
                       </button>
