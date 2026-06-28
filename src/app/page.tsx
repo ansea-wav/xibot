@@ -456,7 +456,7 @@ export default function Home() {
           mass: 0.8
         }}
         style={{ transformOrigin: 'center' }}
-        className="relative z-10 w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
+        className="relative z-10 w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border-2 border-zinc-950 shadow-[8px_8px_0px_#000000] flex flex-col justify-between overflow-hidden"
       >
         
         {/* Dynamic Island Style Language Switcher Notch placed INSIDE the card (overflow-hidden clips it) */}
@@ -914,6 +914,32 @@ export default function Home() {
             </div>
           </motion.div>
         </motion.footer>
+
+        {/* Mobile Floating Bottom Nav Bar */}
+        <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-[#fdfcf7] border-2 border-zinc-950 rounded-full px-4 py-2 flex items-center gap-4 shadow-[4px_4px_0px_#000000]">
+          {(['home', 'features', 'pricing', 'tickets', 'download'] as Tab[]).map((tab) => {
+            const icons: Record<Tab, string> = {
+              home: 'home',
+              features: 'extension',
+              pricing: 'payments',
+              tickets: 'chat_bubble',
+              download: 'download'
+            };
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`w-7.5 h-7.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                  activeTab === tab 
+                    ? 'bg-zinc-950 text-white shadow-[1.5px_1.5px_0px_#000000] border border-zinc-950 scale-105' 
+                    : 'text-zinc-500 hover:text-zinc-950'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px] font-bold">{icons[tab]}</span>
+              </button>
+            );
+          })}
+        </div>
 
       </motion.div>
 
