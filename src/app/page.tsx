@@ -495,7 +495,6 @@ export default function Home() {
             </button>
           </div>
         </motion.div>
-      >
         
         {/* Navigation Bar inside Sheet */}
         <nav className="px-6 sm:px-8 py-4 border-b border-zinc-200/50 flex items-center justify-between shrink-0 bg-[#fdfcf7]/80 backdrop-blur-md z-20">
