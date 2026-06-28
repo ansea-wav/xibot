@@ -757,7 +757,18 @@ export default function Home() {
                 </div>
 
                 <div className="md:w-1/2 flex justify-center">
-                  <div className="relative w-40 h-[190px] bg-zinc-950 rounded-[1.8rem] border-[4px] border-zinc-800 shadow-lg overflow-hidden flex flex-col justify-between p-3 text-white">
+                  <motion.div 
+                    animate={{
+                      y: [0, -8, 0],
+                      rotate: [0, 2, 0, -2, 0],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="relative w-40 h-[190px] bg-zinc-950 rounded-[1.8rem] border-[4px] border-zinc-800 shadow-lg overflow-hidden flex flex-col justify-between p-3 text-white"
+                  >
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-2.5 bg-zinc-800 rounded-b-md"></div>
                     <div className="flex items-center gap-1 mt-1.5">
                       <div className="w-4 h-4 rounded-full bg-zinc-800 flex items-center justify-center"><span className="material-symbols-outlined text-[8px] text-white">public</span></div>
@@ -774,7 +785,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="h-1 w-10 bg-zinc-800 rounded-full mx-auto"></div>
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             )}
