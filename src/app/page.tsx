@@ -427,22 +427,51 @@ export default function Home() {
   return (
     <div className="h-screen h-[100dvh] w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
       
-      {/* Page Content Wrapper for Main Sheet and Sidebar attachments */}
-      <div className="relative w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl flex items-center justify-center z-10">
+      {/* Hidden SVG Gooey Filter Definition */}
+      <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
 
-        {/* Dynamic Island Style Language Switcher Notch sticking to the edge of main card container */}
+      {/* Background Ambience / Blur */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-zinc-800/30 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-700/20 rounded-full blur-[120px]"></div>
+      </div>
+
+      {/* Floating Main Sheet Container with viewport and security scaleY constraints */}
+      <motion.div 
+        animate={{
+          scaleY: isLocked ? 0 : 1,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 18,
+          mass: 0.8
+        }}
+        style={{ transformOrigin: 'center' }}
+        className="relative z-10 w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
+      >
+        
+        {/* Dynamic Island Style Language Switcher Notch placed INSIDE the card (overflow-hidden clips it) */}
         <motion.div
           onMouseEnter={() => setLangHovered(true)}
           onMouseLeave={() => setLangHovered(false)}
           animate={{
-            x: isLangCollapsed ? 0 : -36,
+            x: isLangCollapsed ? -34 : 0,
           }}
           transition={{
             type: "spring",
             stiffness: 220,
             damping: 18
           }}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-0 bg-[#121214] text-white w-[42px] h-[110px] rounded-l-[1.5rem] border border-zinc-850 border-r-0 shadow-2xl flex flex-col items-center justify-center py-2.5 cursor-pointer select-none"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-[#121214] text-white w-[42px] h-[110px] rounded-r-[1.5rem] border border-zinc-800 border-l-0 shadow-2xl flex flex-col items-center justify-center py-2.5 cursor-pointer select-none"
         >
           <div className="relative flex flex-col items-center gap-2 w-full h-full justify-center">
             {/* Sliding Pill Indicator */}
@@ -466,37 +495,6 @@ export default function Home() {
             </button>
           </div>
         </motion.div>
-
-        {/* Hidden SVG Gooey Filter Definition */}
-        <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <filter id="goo">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
-              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-
-        {/* Background Ambience / Blur */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-zinc-800/30 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-700/20 rounded-full blur-[120px]"></div>
-        </div>
-
-        {/* Floating Main Sheet Container with viewport and security scaleY constraints */}
-        <motion.div 
-          animate={{
-            scaleY: isLocked ? 0 : 1,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 150,
-            damping: 18,
-            mass: 0.8
-          }}
-          style={{ transformOrigin: 'center' }}
-          className="relative z-10 w-full h-full rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
       >
         
         {/* Navigation Bar inside Sheet */}
@@ -919,7 +917,6 @@ export default function Home() {
         </motion.footer>
 
       </motion.div>
-    </div>
 
       {/* Login Modal */}
       <AnimatePresence>
