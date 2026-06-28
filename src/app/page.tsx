@@ -104,6 +104,36 @@ export default function Home() {
   const [langHovered, setLangHovered] = useState(false);
   const [langAutoHide, setLangAutoHide] = useState(false);
 
+  const renderHeroTitle = (title: string) => {
+    const lines = title.split('\n');
+    return lines.map((line, lineIndex) => {
+      const words = line.split(' ');
+      const renderedWords = words.map((word, wordIndex) => {
+        const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        const isBot = cleanWord.toLowerCase() === 'bot' || cleanWord.toLowerCase() === 'bots';
+        
+        if (isBot) {
+          const punctuation = word.slice(cleanWord.length);
+          return (
+            <span key={wordIndex} className="inline-block relative">
+              <span className="animate-flicker inline-block text-zinc-950 font-black relative">
+                {cleanWord}
+              </span>
+              {punctuation}{' '}
+            </span>
+          );
+        }
+        return word + ' ';
+      });
+
+      return (
+        <span key={lineIndex} className="block">
+          {renderedWords}
+        </span>
+      );
+    });
+  };
+
   // Download state
   const [downloadCooldown, setDownloadCooldown] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -572,8 +602,31 @@ export default function Home() {
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
                   {t.heroBadge}
                 </div>
+                <style dangerouslySetInnerHTML={{ __html: `
+                  @keyframes neon-turn-on {
+                    0% { opacity: 0.15; }
+                    4% { opacity: 0.95; }
+                    8% { opacity: 0.2; }
+                    12% { opacity: 0.9; }
+                    16% { opacity: 0.3; }
+                    20% { opacity: 1; }
+                    24% { opacity: 0.35; }
+                    28% { opacity: 0.95; }
+                    35% { opacity: 1; }
+                    55% { opacity: 1; }
+                    56% { opacity: 0.25; }
+                    57% { opacity: 1; }
+                    85% { opacity: 1; }
+                    86% { opacity: 0.4; }
+                    87% { opacity: 1; }
+                    100% { opacity: 1; }
+                  }
+                  .animate-flicker {
+                    animation: neon-turn-on 4s infinite;
+                  }
+                `}} />
                 <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-950 leading-tight whitespace-pre-line">
-                  {t.heroTitle}
+                  {renderHeroTitle(t.heroTitle)}
                 </h1>
                 <p className="text-xs sm:text-sm text-zinc-550 max-w-lg mx-auto leading-relaxed">
                   {t.heroDesc}
