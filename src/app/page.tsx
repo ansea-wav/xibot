@@ -104,35 +104,6 @@ export default function Home() {
   const [langHovered, setLangHovered] = useState(false);
   const [langAutoHide, setLangAutoHide] = useState(false);
 
-  const renderHeroTitle = (title: string) => {
-    const lines = title.split('\n');
-    return lines.map((line, lineIndex) => {
-      const words = line.split(' ');
-      const renderedWords = words.map((word, wordIndex) => {
-        const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-        const isBot = cleanWord.toLowerCase() === 'bot' || cleanWord.toLowerCase() === 'bots';
-        
-        if (isBot) {
-          const punctuation = word.slice(cleanWord.length);
-          return (
-            <span key={wordIndex} className="inline-block relative">
-              <span className="animate-flicker inline-block text-zinc-950 font-black relative">
-                {cleanWord}
-              </span>
-              {punctuation}{' '}
-            </span>
-          );
-        }
-        return word + ' ';
-      });
-
-      return (
-        <span key={lineIndex} className="block">
-          {renderedWords}
-        </span>
-      );
-    });
-  };
 
   // Download state
   const [downloadCooldown, setDownloadCooldown] = useState(0);
@@ -456,73 +427,76 @@ export default function Home() {
   return (
     <div className="h-screen h-[100dvh] w-screen overflow-hidden bg-[#0d0d11] text-zinc-900 selection:bg-zinc-800/10 font-sans flex items-center justify-center p-3 sm:p-6 md:p-8 relative">
       
-      {/* Dynamic Island Style Language Switcher Notch on the Left Edge */}
-      <motion.div
-        onMouseEnter={() => setLangHovered(true)}
-        onMouseLeave={() => setLangHovered(false)}
-        animate={{
-          x: isLangCollapsed ? -30 : 0,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 220,
-          damping: 18
-        }}
-        className="fixed left-0 top-1/2 -translate-y-1/2 z-[99] bg-[#121214] text-white w-[42px] h-[110px] rounded-r-[1.5rem] border border-zinc-800 border-l-0 shadow-2xl flex flex-col items-center justify-center py-2.5 cursor-pointer select-none"
-      >
-        <div className="relative flex flex-col items-center gap-2 w-full h-full justify-center">
-          {/* Sliding Pill Indicator */}
-          <div 
-            className="absolute w-[30px] h-[34px] rounded-xl bg-zinc-800 transition-all duration-300 pointer-events-none"
-            style={{
-              transform: lang === 'en' ? 'translateY(-21px)' : 'translateY(21px)'
-            }}
-          />
-          <button 
-            onClick={(e) => { e.stopPropagation(); handleLangChange('en'); }}
-            className={`relative z-10 w-[30px] h-[34px] flex items-center justify-center rounded-xl text-[9px] font-black tracking-widest ${lang === 'en' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
-          >
-            EN
-          </button>
-          <button 
-            onClick={(e) => { e.stopPropagation(); handleLangChange('id'); }}
-            className={`relative z-10 w-[30px] h-[34px] flex items-center justify-center rounded-xl text-[9px] font-black tracking-widest ${lang === 'id' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
-          >
-            ID
-          </button>
+      {/* Page Content Wrapper for Main Sheet and Sidebar attachments */}
+      <div className="relative w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl flex items-center justify-center z-10">
+
+        {/* Dynamic Island Style Language Switcher Notch sticking to the edge of main card container */}
+        <motion.div
+          onMouseEnter={() => setLangHovered(true)}
+          onMouseLeave={() => setLangHovered(false)}
+          animate={{
+            x: isLangCollapsed ? 0 : -36,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 220,
+            damping: 18
+          }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-0 bg-[#121214] text-white w-[42px] h-[110px] rounded-l-[1.5rem] border border-zinc-850 border-r-0 shadow-2xl flex flex-col items-center justify-center py-2.5 cursor-pointer select-none"
+        >
+          <div className="relative flex flex-col items-center gap-2 w-full h-full justify-center">
+            {/* Sliding Pill Indicator */}
+            <div 
+              className="absolute w-[30px] h-[34px] rounded-xl bg-zinc-800 transition-all duration-300 pointer-events-none"
+              style={{
+                transform: lang === 'en' ? 'translateY(-21px)' : 'translateY(21px)'
+              }}
+            />
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleLangChange('en'); }}
+              className={`relative z-10 w-[30px] h-[34px] flex items-center justify-center rounded-xl text-[9px] font-black tracking-widest ${lang === 'en' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
+            >
+              EN
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleLangChange('id'); }}
+              className={`relative z-10 w-[30px] h-[34px] flex items-center justify-center rounded-xl text-[9px] font-black tracking-widest ${lang === 'id' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
+            >
+              ID
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Hidden SVG Gooey Filter Definition */}
+        <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
+
+        {/* Background Ambience / Blur */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-zinc-800/30 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-700/20 rounded-full blur-[120px]"></div>
         </div>
-      </motion.div>
 
-      {/* Hidden SVG Gooey Filter Definition */}
-      <svg className="absolute w-0 h-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-
-      {/* Background Ambience / Blur */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-zinc-800/30 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-zinc-700/20 rounded-full blur-[120px]"></div>
-      </div>
-
-      {/* Floating Main Sheet Container with viewport and security scaleY constraints */}
-      <motion.div 
-        animate={{
-          scaleY: isLocked ? 0 : 1,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 18,
-          mass: 0.8
-        }}
-        style={{ transformOrigin: 'center' }}
-        className="relative z-10 w-full h-full max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-3rem)] md:max-h-[calc(100vh-4rem)] max-w-7xl rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
+        {/* Floating Main Sheet Container with viewport and security scaleY constraints */}
+        <motion.div 
+          animate={{
+            scaleY: isLocked ? 0 : 1,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 150,
+            damping: 18,
+            mass: 0.8
+          }}
+          style={{ transformOrigin: 'center' }}
+          className="relative z-10 w-full h-full rounded-[2.5rem] bg-[#fdfcf7] border border-white/20 shadow-2xl flex flex-col justify-between overflow-hidden"
       >
         
         {/* Navigation Bar inside Sheet */}
@@ -602,31 +576,8 @@ export default function Home() {
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
                   {t.heroBadge}
                 </div>
-                <style dangerouslySetInnerHTML={{ __html: `
-                  @keyframes neon-turn-on {
-                    0% { opacity: 0.15; }
-                    4% { opacity: 0.95; }
-                    8% { opacity: 0.2; }
-                    12% { opacity: 0.9; }
-                    16% { opacity: 0.3; }
-                    20% { opacity: 1; }
-                    24% { opacity: 0.35; }
-                    28% { opacity: 0.95; }
-                    35% { opacity: 1; }
-                    55% { opacity: 1; }
-                    56% { opacity: 0.25; }
-                    57% { opacity: 1; }
-                    85% { opacity: 1; }
-                    86% { opacity: 0.4; }
-                    87% { opacity: 1; }
-                    100% { opacity: 1; }
-                  }
-                  .animate-flicker {
-                    animation: neon-turn-on 4s infinite;
-                  }
-                `}} />
                 <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-950 leading-tight whitespace-pre-line">
-                  {renderHeroTitle(t.heroTitle)}
+                  {t.heroTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-zinc-550 max-w-lg mx-auto leading-relaxed">
                   {t.heroDesc}
@@ -968,6 +919,7 @@ export default function Home() {
         </motion.footer>
 
       </motion.div>
+    </div>
 
       {/* Login Modal */}
       <AnimatePresence>
