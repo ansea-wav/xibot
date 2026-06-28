@@ -545,7 +545,7 @@ export default function Home() {
               </button>
             ) : (
               <button 
-                onClick={() => setShowLogin(true)}
+                onClick={() => window.location.href = 'https://dash.wazle.my.id/'}
                 className="px-5 py-2 bg-zinc-200/60 hover:bg-zinc-200 text-zinc-900 rounded-full text-xs font-bold transition-all active:scale-95"
               >
                 Login
@@ -580,7 +580,7 @@ export default function Home() {
                   {t.heroDesc}
                 </p>
                 <div className="flex items-center justify-center gap-3 pt-2">
-                  <button onClick={() => setShowLogin(true)} className="px-5 py-2.5 bg-zinc-950 text-white rounded-full text-xs font-bold hover:bg-zinc-900 transition-all active:scale-95">
+                  <button onClick={() => window.location.href = 'https://dash.wazle.my.id/'} className="px-5 py-2.5 bg-zinc-950 text-white rounded-full text-xs font-bold hover:bg-zinc-900 transition-all active:scale-95">
                     {t.ctaStart}
                   </button>
                   <button onClick={() => setActiveTab('pricing')} className="px-5 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-950 border border-zinc-200 rounded-full text-xs font-bold transition-all active:scale-95">
@@ -660,7 +660,7 @@ export default function Home() {
                       </div>
                       
                       <button 
-                        onClick={() => setShowLogin(true)}
+                        onClick={() => window.location.href = loggedInPhone ? 'https://dash.wazle.my.id/?authPhone=' + loggedInPhone : 'https://dash.wazle.my.id/'}
                         className={`w-full py-2 rounded-xl text-[10px] font-bold transition-all active:scale-95 mt-auto ${p.popular ? 'bg-white text-zinc-950 hover:bg-zinc-100' : 'bg-zinc-950 text-white hover:bg-zinc-900'}`}
                       >
                         {t.selectPlan}
@@ -871,7 +871,7 @@ export default function Home() {
                 
                 {/* Action buttons shown on tablet/desktop */}
                 <div className="hidden sm:flex items-center gap-1.5 pt-0.5">
-                  <button onClick={() => setShowLogin(true)} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">{t.startFree}</button>
+                  <button onClick={() => window.location.href = loggedInPhone ? 'https://dash.wazle.my.id/?authPhone=' + loggedInPhone : 'https://dash.wazle.my.id/'} className="px-2.5 py-0.5 bg-white text-zinc-950 font-bold rounded-full text-[8px] hover:bg-zinc-100 transition-colors">{t.startFree}</button>
                   <button onClick={() => setActiveTab('download')} className="px-2.5 py-0.5 bg-transparent border border-zinc-700 text-white font-bold rounded-full text-[8px] hover:bg-zinc-800 transition-colors">{t.downloadApp}</button>
                 </div>
               </div>
